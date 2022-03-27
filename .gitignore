@@ -1,4 +1,5 @@
 *.pyc
-*/migrations
+*/migrations/*
+!*/migrations/__init__.py
 .idea
 db.sqlite3
