@@ -29,7 +29,7 @@ class Post(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextField()
 
-    status = models.CharField(max_length=1, choices=POST_STATUS)
+    status = models.CharField(default='T', max_length=1, choices=POST_STATUS)
 
 
 class Comment(models.Model):
