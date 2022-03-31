@@ -24,6 +24,7 @@ class Post(models.Model):
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
 
+    thumbnail = models.ImageField()
     writer = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
     content = models.TextField()
