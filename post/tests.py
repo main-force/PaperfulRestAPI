@@ -54,8 +54,11 @@ class ViewTestCase(TestCase):
         self.client = APIClient()
 
     def test_api_can_get_post_list(self):
-        """ API가 post_list를 얻을 수 있는지 테스트합니다."""
-        post_list = Post.objects.all()
+        """
+        API가 post_list를 얻을 수 있는지 테스트합니다.
+        이 때, status='O'인 post만 list에 담습니다.
+        """
+        post_list = Post.objects.filter(status='O')
         response = self.client.get(
             reverse('post:all'),
             format='json'
