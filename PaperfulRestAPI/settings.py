@@ -37,12 +37,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_framework.authtoken'
+]
+
+# 커스텀 app
+INSTALLED_APPS += [
     'post.apps.PostConfig',
     'account.apps.AccountConfig',
     'userprofile.apps.UserprofileConfig',
-    'rest_framework',
-    'rest_framework.authtoken',
+    'comment.apps.CommentConfig'
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
