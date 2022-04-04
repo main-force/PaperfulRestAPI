@@ -4,11 +4,5 @@ from post import views
 
 app_name = 'post'
 
-router = DefaultRouter()
-router.register(r'', views.PostViewSet)
-
 urlpatterns = [
-    path('', include(router.urls))
 ]
-
-
