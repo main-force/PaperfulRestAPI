@@ -2,6 +2,7 @@ from django.db import models
 from account.models import User
 from userprofile.models import UserProfile
 
+
 POST_STATUS = (
     ('T', 'Temporary save'),
     ('O', 'Open'),
