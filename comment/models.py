@@ -15,8 +15,8 @@ class Comment(models.Model):
 
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comment_list')
     parent_comment = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='child_comment_list')
-    writer_mention = models.ForeignKey(UserProfile, on_delete=models.CASCADE, null=True, blank=True)
-    writer = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    writer_mention = models.ForeignKey(UserProfile, on_delete=models.CASCADE, null=True, blank=True, related_name='writer_meiton_comment_list')
+    writer = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='writer_comment_list')
     content = models.TextField()
 
     status = models.CharField(max_length=1, choices=COMMENT_STATUS, default='O')

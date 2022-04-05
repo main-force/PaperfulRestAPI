@@ -1,4 +1,4 @@
-from django.utils import timezone
+from django.utils import timezone, dateformat
 from datetime import timedelta
 
 def created_at_string(create_at):
@@ -14,4 +14,4 @@ def created_at_string(create_at):
         time = timezone.now().date() - create_at.date()
         return str(time.days) + '일 전'
     else:
-        return False
+        return dateformat.format(create_at, 'Y.m.d H:i')

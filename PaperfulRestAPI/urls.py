@@ -23,5 +23,5 @@ urlpatterns = [
     path('post/', include('post.urls')),
     path('token-auth/', obtain_auth_token, name='obtain-auth-token'),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('comment/', include('comment.urls')),
+    # path('comment/', include('comment.urls')),
 ]

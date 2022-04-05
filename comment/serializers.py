@@ -7,6 +7,9 @@ from PaperfulRestAPI.tools.parsers import created_at_string
 
 
 class ParentCommentSerializer(serializers.ModelSerializer):
+    create_at = serializers.SerializerMethodField()
+    update_at = serializers.SerializerMethodField()
+    writer = serializers.SerializerMethodField()
     child_comment_list = serializers.SerializerMethodField()
 
     def get_create_at(self, obj):
@@ -15,14 +18,11 @@ class ParentCommentSerializer(serializers.ModelSerializer):
     def get_update_at(self, obj):
         return created_at_string(obj.update_at)
 
-    def get_writer_mention(self, obj):
-        return UserProfileSerializer(obj.writer_mention).data
-
     def get_writer(self, obj):
         return UserProfileSerializer(obj.writer).data
 
     def get_child_comment_list(self, obj):
-        child_comment_obj_list = obj.child_comment_list.all().order_by('-create_at')
+        child_comment_obj_list = obj.child_comment_list.filter(status='O').order_by('-create_at')
         return _ChildCommentSerializer(child_comment_obj_list, many=True).data
 
     class Meta:
@@ -37,6 +37,9 @@ class ParentCommentSerializer(serializers.ModelSerializer):
 
 
 class _ChildCommentSerializer(serializers.ModelSerializer):
+    create_at = serializers.SerializerMethodField()
+    update_at = serializers.SerializerMethodField()
+    writer_mention = serializers.SerializerMethodField()
     writer = serializers.SerializerMethodField()
 
     def get_create_at(self, obj):
