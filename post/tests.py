@@ -58,7 +58,7 @@ class ViewTestCase(TestCase):
         API가 post_list를 얻을 수 있는지 테스트합니다.
         이 때, status='O'인 post만 list에 담습니다.
         """
-        post_list = Post.objects.filter(status='O')
+        post_list = Post.objects.filter(status='O').order_by('-create_at')
         response = self.client.get(
             reverse('post:all'),
             format='json'
@@ -70,9 +70,9 @@ class ViewTestCase(TestCase):
 
     def test_api_can_get_the_post(self):
         """ API가 주어진 post를 얻을 수 있는지 테스트합니다."""
-        post = Post.objects.last()
+        post = Post.objects.first()
         response = self.client.get(
-            reverse('post:detail', kwargs={'pk': post.pk}),
+            reverse('post:detail', kwargs={'id': post.id}),
             format='json'
         )
         serializer = PostSerializer(post)

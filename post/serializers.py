@@ -9,6 +9,10 @@ from comment.serializers import ParentCommentSerializer
 
 
 class PostSerializer(serializers.ModelSerializer):
+    create_at = serializers.SerializerMethodField()
+    update_at = serializers.SerializerMethodField()
+    intro = serializers.SerializerMethodField()
+    writer = serializers.SerializerMethodField()
     comment_list = serializers.SerializerMethodField()
 
     def get_create_at(self, obj):
@@ -28,11 +32,12 @@ class PostSerializer(serializers.ModelSerializer):
 
     def get_comment_list(self, obj):
         parent_comment_list = _get_parent_comment_list(obj)
-        return ParentCommentSerializer(parent_comment_list, many=True)
+        return ParentCommentSerializer(parent_comment_list, many=True).data
 
     class Meta:
         model = Post
         fields = (
+            'id',
             'tag',
             'create_at',
             'update_at',
@@ -46,4 +51,4 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 def _get_parent_comment_list(post):
-    return post.comment_list.filter(parent_comment=None).order_by('-create_at')
+    return post.comment_list.filter(parent_comment=None, status='O').order_by('-create_at')

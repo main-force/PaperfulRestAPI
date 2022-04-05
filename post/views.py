@@ -1,19 +1,34 @@
+from django.core.exceptions import ObjectDoesNotExist
+
+from PaperfulRestAPI.config.permissions import IsOwnerOrReadOnly, AllowAny
 from post.models import Post
 from post.serializers import PostSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
+
 
 class PostListAPIView(APIView):
-     def get(self, request):
-         serializer = PostSerializer(Post.objects.all(), many=True)
-         return Response(serializer.data)
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        post_list = Post.objects.filter(status='O').order_by('-create_at')
+        serializer = PostSerializer(post_list, many=True)
+        return Response(serializer.data)
+
 
 class PostDetailAPIView(APIView):
-    def get_object(self, pk):
-        return get_object_or_404(Post, pk=pk)
+    permission_classes = [IsOwnerOrReadOnly]
 
-    def get(self, request, pk, format=None):
-        post = self.get_object(pk)
+    def get_object(self, id):
+        try:
+            post = Post.objects.get(id=id)
+            self.check_object_permissions(self.request, post)
+            return post
+        except ObjectDoesNotExist:
+            return None
+
+    def get(self, request, id, format=None):
+        post = self.get_object(id)
         serializer = PostSerializer(post)
+
         return Response(serializer.data)
