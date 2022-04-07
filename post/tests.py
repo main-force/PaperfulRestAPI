@@ -16,6 +16,8 @@ class ViewTestCase(TestCase):
             email='testuser1@test.com',
             username='testuser1'
         )
+        test_user_1.set_password('testuser1_password')
+        test_user_1.save()
 
         test_user_2 = User.objects.create(
             email='testuser2@test.com',
@@ -78,3 +80,19 @@ class ViewTestCase(TestCase):
         serializer = PostSerializer(post)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, serializer.data)
+
+    def test_api_can_create_post(self):
+        """ API가 Post 모델을 create 할 수 있는지 테스트합니다."""
+        auth_request = {
+            'email': 'testuser1@test.com',
+            'password': 'testuser1_password'
+        }
+
+        auth_response = self.client.post(
+            reverse('obtain-auth-token'),
+            data=auth_request,
+            format='json'
+        )
+
+        auth_token = auth_response.data['token']
+

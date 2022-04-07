@@ -44,16 +44,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         ordering = ('-date_joined',)
 
     def __str__(self):
-        return self.username
-
-    def get_full_name(self):
-        return self.username
-
-    def get_short_name(self):
-        return self.username
+        return f'{self.username}[{self.email}]'
 
     @property
     def is_staff(self):
-        "Is the user a member of staff?"
-        # Simplest possible answer: All superusers are staff
         return self.is_superuser

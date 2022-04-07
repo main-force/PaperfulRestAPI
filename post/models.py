@@ -13,6 +13,9 @@ POST_STATUS = (
 class Tag(models.Model):
     name = models.CharField(max_length=10)
 
+    def __str__(self):
+        return self.name
+
 
 class Post(models.Model):
     tag = models.ManyToManyField(Tag, blank=True, related_name='post')
@@ -27,4 +30,6 @@ class Post(models.Model):
 
     status = models.CharField(default='T', max_length=1, choices=POST_STATUS)
 
+    def __str(self):
+        return self.title
 
