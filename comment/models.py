@@ -20,3 +20,6 @@ class Comment(models.Model):
     content = models.TextField()
 
     status = models.CharField(max_length=1, choices=COMMENT_STATUS, default='O')
+
+    def __str__(self):
+        return self.content[:20]
