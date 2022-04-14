@@ -15,3 +15,4 @@ def created_at_string(create_at):
         return str(time.days) + '일 전'
     else:
         return dateformat.format(create_at, 'Y.m.d H:i')
+

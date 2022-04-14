@@ -7,7 +7,7 @@ from django.utils.text import Truncator
 from PaperfulRestAPI.tools.parsers import created_at_string
 from comment.serializers import ParentCommentSerializer
 from rest_framework.exceptions import ValidationError
-
+from PaperfulRestAPI.config.domain import host_domain
 
 class PostSerializer(serializers.ModelSerializer):
     create_at = serializers.SerializerMethodField()
@@ -15,6 +15,7 @@ class PostSerializer(serializers.ModelSerializer):
     intro = serializers.SerializerMethodField()
     writer = serializers.SerializerMethodField()
     comment_list = serializers.SerializerMethodField()
+    thumbnail = serializers.SerializerMethodField()
 
     def create(self, validated_data):
         print(validated_data)
@@ -34,6 +35,12 @@ class PostSerializer(serializers.ModelSerializer):
 
     def get_writer(self, obj):
         return UserProfileSerializer(obj.writer).data
+
+    def get_thumbnail(self, obj):
+        if obj.thumbnail:
+            return f'{host_domain}{obj.thumbnail.url}'
+        else:
+            return 'null'
 
     def get_comment_list(self, obj):
         parent_comment_list = _get_parent_comment_list(obj)
