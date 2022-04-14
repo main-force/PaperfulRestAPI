@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
 
+from PaperfulRestAPI.config.domain import host_domain
 from account.models import User
 from userprofile.models import UserProfile
 from django.core.validators import validate_email
@@ -9,6 +10,14 @@ from django.shortcuts import get_object_or_404
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+
+    def get_image(self, obj):
+        if obj.image:
+            return f'{host_domain}{obj.image.url}'
+        else:
+            return 'null'
+
     class Meta:
         model = UserProfile
         fields = (
