@@ -14,7 +14,6 @@ from django.urls import reverse
 
 
 class PostListAPIView(APIView, PostLimitOffsetPagination):
-    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, request):
@@ -46,7 +45,6 @@ class PostListAPIView(APIView, PostLimitOffsetPagination):
 
 
 class PostDetailAPIView(APIView):
-    authentication_classes = [TokenAuthentication]
     permission_classes = [IsOwnerOrReadOnly]
 
     def get_object(self, pk):
