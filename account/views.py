@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import render
 
 # Create your views here.
@@ -27,11 +28,11 @@ class ObtainAuthToken(APIView):
         user = serializer.validated_data['user']
         token, created = Token.objects.get_or_create(user=user)
 
-        content = {
+        results = {
             'token': token.key,
         }
 
-        return Response(content)
+        return Response(results)
 
 
 obtain_auth_token = ObtainAuthToken.as_view()
