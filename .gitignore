@@ -7,3 +7,4 @@ media/*
 requirements.txt
 venv
 static
+/PaperfulRestAPI/config/domain.py
