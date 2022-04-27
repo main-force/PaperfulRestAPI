@@ -1,4 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from PaperfulRestAPI.config.domain import host_domain
@@ -13,6 +14,7 @@ from django.urls import reverse
 
 
 class PostListAPIView(APIView, PostLimitOffsetPagination):
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, request):
@@ -23,8 +25,10 @@ class PostListAPIView(APIView, PostLimitOffsetPagination):
         return self.get_paginated_response(serializer.data)
 
     def post(self, request):
+        print(request.data)
         set_user_profile_to_request(request)
         serializer = BasePostSerializer(data=request.data)
+
         if serializer.is_valid():
             # print('isvalid')
             # print(serializer.validated_data['writer'])
@@ -42,6 +46,7 @@ class PostListAPIView(APIView, PostLimitOffsetPagination):
 
 
 class PostDetailAPIView(APIView):
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsOwnerOrReadOnly]
 
     def get_object(self, pk):
