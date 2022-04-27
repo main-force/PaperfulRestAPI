@@ -2,11 +2,14 @@ from django.db import models
 from account.models import User
 
 
+def _userprofile_image_directory_path(instance, filename):
+    return 'userprofiles/{}/image/{}'.format(instance.id, filename)
+
 
 class UserProfile(models.Model):
     user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='profile')
     nickname = models.CharField(max_length=16, unique=True)
-    image = models.ImageField(null=True, blank=True)
+    image = models.ImageField(null=True, blank=True, upload_to=_userprofile_image_directory_path)
 
     def __str__(self):
         return self.nickname

@@ -55,7 +55,7 @@ class ViewTestCase(TestCase):
     def setUp(self):
         self.client = APIClient()
 
-    def test_api_can_get_post_list(self):
+    def test_api_can_get_post_list_default(self):
         """
         API가 post_list를 얻을 수 있는지 테스트합니다.
         이 때, status='O'인 post만 list에 담습니다.

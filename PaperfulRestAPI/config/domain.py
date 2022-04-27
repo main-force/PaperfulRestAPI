@@ -1,1 +1,1 @@
-host_domain = 'http://172.16.161.134:8080'
+host_domain = 'http://localhost:8080'

@@ -22,8 +22,8 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('post/', include('post.urls')),
-    path('token-auth/', obtain_auth_token, name='obtain-auth-token'),
+    path('posts', include('post.urls')),
+    path('auth/', obtain_auth_token, name='obtain-auth-token'),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     # path('comment/', include('comment.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
