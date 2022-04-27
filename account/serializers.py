@@ -16,7 +16,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         if obj.image:
             return f'{host_domain}{obj.image.url}'
         else:
-            return 'null'
+            return None
 
     class Meta:
         model = UserProfile
