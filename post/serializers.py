@@ -77,16 +77,3 @@ class PostDetailSerializer(BasePostSerializer):
     class Meta:
         model = Post
         fields = '__all__'
-
-
-class PostSerializerMethodPost(serializers.ModelSerializer):
-    class Meta:
-        model = Post
-        fields = (
-            'id',
-            'writer',
-            'intro',
-            'title',
-            'content',
-            'status'
-        )

@@ -24,23 +24,16 @@ class PostListAPIView(APIView, PostLimitOffsetPagination):
         return self.get_paginated_response(serializer.data)
 
     def post(self, request):
-        print(request.data)
         set_user_profile_to_request(request)
         serializer = BasePostSerializer(data=request.data)
 
         if serializer.is_valid():
-            # print('isvalid')
-            # print(serializer.validated_data['writer'])
-            # writer_id = serializer.validated_data['writer'].id
-            # if request.user.profile.filter(id=writer_id).exists():
             instance = serializer.save()
             instance_url = reverse('post:detail', args=(instance.id,))
             data = {
                 'url': f'{host_domain}{instance_url}'
             }
             return Response(data, status=201)
-            # else:
-            #     Response({'error': '해당 유저가 소유하고 있는 프로필 id가 아닙니다.'}, status=400)
         return Response(serializer.errors, status=400)
 
 
@@ -65,3 +58,9 @@ class PostDetailAPIView(APIView):
                 'messages': '해당 글을 찾을 수 없습니다.'
             }
             return Response(data=data, status=404)
+
+    def put(self, request, pk):
+        pass
+
+    def delete(self):
+        pass
