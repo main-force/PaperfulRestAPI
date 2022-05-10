@@ -17,12 +17,6 @@ from comment.paginations import CommentLimitOffsetPagination
 from post.models import Post
 
 
-def is_parent_comment(comment):
-    if comment.parent_comment:
-        return False
-    else:
-        return True
-
 def _get_post_object(pk):
     try:
         post = Post.objects.get(id=pk)
@@ -30,13 +24,13 @@ def _get_post_object(pk):
     except ObjectDoesNotExist:
         return None
 
+
 def _get_parent_comment_object(pk):
     try:
         comment = Comment.objects.filter(parent_comment__isnull=True).get(id=pk)
         return comment
     except ObjectDoesNotExist:
         return None
-
 
 
 class ChildCommentListAPIView(APIView, CommentLimitOffsetPagination):
@@ -58,29 +52,6 @@ class ChildCommentListAPIView(APIView, CommentLimitOffsetPagination):
             result = self.paginate_queryset(comment_list, request, view=self)
             serializer = ChildCommentSerializer(result, many=True)
             return self.get_paginated_response(serializer.data)
-        else:
-            data = {
-                'messages': '해당 댓글을 찾을 수 없습니다.'
-            }
-            return Response(data=data, status=404)
-
-    def post(self, request, pk):
-        comment = _get_parent_comment_object(pk)
-        if comment:
-            set_user_profile_to_request(request)
-            set_post_to_request(request, comment.post)
-            set_parent_comment_to_request(request, comment)
-            serializer = BaseCommentSerializer(data=request.data)
-
-            if serializer.is_valid():
-                instance = serializer.save()
-                instance_url = reverse('comment:detail', args=(instance.id,))
-                data = {
-                    'url': f'{host_domain}{instance_url}'
-                }
-                return Response(data, status=201)
-            return Response(serializer.errors, status=400)
-
         else:
             data = {
                 'messages': '해당 댓글을 찾을 수 없습니다.'
@@ -115,7 +86,7 @@ class CommentDetailAPIView(APIView):
         """
         comment = self.get_object(pk)
         if comment:
-            if is_parent_comment(comment):
+            if comment.is_parent:
                 serializer = ParentCommentSerializer(comment)
             else:
                 serializer = ChildCommentSerializer(comment)
@@ -127,7 +98,33 @@ class CommentDetailAPIView(APIView):
             return Response(data=data, status=404)
 
     def patch(self, request, pk):
-        pass
+        comment = self.get_object(pk)
+        if comment:
+            serializer = BaseCommentSerializer(comment, data=request.data, partial=True)
+            if serializer.is_valid():
+                instance = serializer.save()
+                instance_url = reverse('comment:detail', args=(instance.id,))
+                data = {
+                    'url': f'{host_domain}{instance_url}'
+                }
+                return Response(data, status=200)
+            return Response(serializer.errors, status=400)
+        else:
+            data = {
+                'messages': '해당 댓글을 찾을 수 없습니다.'
+            }
+            return Response(data=data, status=404)
 
-    def delete(self):
-        pass
+    def delete(self, request, pk):
+        comment = self.get_object(pk)
+        if comment:
+            comment.delete()
+            data = {
+                'messages': '삭제 완료'
+            }
+            return Response(data=data, status=204)
+        else:
+            data = {
+                'messages': '해당 댓글을 찾을 수 없습니다.'
+            }
+            return Response(data=data, status=404)

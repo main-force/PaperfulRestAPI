@@ -17,7 +17,7 @@ class Comment(models.Model):
 
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comment_list')
     parent_comment = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='child_comment_list')
-    writer_mention = models.ForeignKey(UserProfile, on_delete=models.CASCADE, null=True, blank=True, related_name='writer_meiton_comment_list')
+    writer_mentions = models.ManyToManyField(UserProfile, blank=True, related_name='writer_mention_comment_list')
     writer = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='writer_comment_list')
     content = models.TextField()
 
@@ -25,3 +25,10 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.content[:20]
+
+    @property
+    def is_parent(self):
+        if self.parent_comment:
+            return False
+        else:
+            return True

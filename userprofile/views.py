@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 
 from PaperfulRestAPI.config.domain import host_domain
-from PaperfulRestAPI.config.permissions import IsOwnerOrReadOnly
+from PaperfulRestAPI.config.permissions import IsOwnerOrReadOnly, IsOwnerOnly
 from comment.paginations import CommentLimitOffsetPagination
 from comment.serializers import BaseCommentSerializer
 from post.models import Post
@@ -16,6 +16,7 @@ from post.serializers import PostListSerializer, BasePostSerializer
 from userprofile.models import UserProfile
 from userprofile.serializers import UserProfileDetailSerializer, BaseUserProfileSerializer
 from django.urls import reverse
+from comment.models import Comment
 
 
 class UserProfileListAPIView(APIView):
@@ -121,7 +122,7 @@ class UserProfilePostListAPIView(APIView, PostLimitOffsetPagination):
             return Response(data=data, status=404)
 
     def post(self, request, pk):
-        user_profile = self.get_object(pk)
+        user_profile = self.get_user_profile(pk)
         if user_profile:
             serializer = BasePostSerializer(data=request.data)
 
@@ -141,8 +142,24 @@ class UserProfilePostListAPIView(APIView, PostLimitOffsetPagination):
             return Response(data=data, status=404)
 
 
+def _get_post_object(pk):
+    try:
+        post = Post.objects.get(id=pk)
+        return post
+    except ObjectDoesNotExist:
+        return None
+
+
+def _get_comment_object(pk):
+    try:
+        comment = Comment.objects.get(id=pk)
+        return comment
+    except ObjectDoesNotExist:
+        return None
+
+
 class UserProfileCommentListAPIView(APIView, CommentLimitOffsetPagination):
-    permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = [IsOwnerOnly]
 
     def get_user_profile(self, pk):
         try:
@@ -152,37 +169,26 @@ class UserProfileCommentListAPIView(APIView, CommentLimitOffsetPagination):
         except ObjectDoesNotExist:
             return None
 
-    # def get(self, request, pk):
-    #     """
-    #     :param request: client's http request.
-    #     :param pk: post's id
-    #     :return: pk를 가진 post의 댓글들
-    #     """
-    #     post = _get_post_object(pk)
-    #     if post:
-    #         comment_list = post.comment_list.filter(status='O', parent_comment__isnull=True).order_by('-create_at')
-    #         result = self.paginate_queryset(comment_list, request, view=self)
-    #         serializer = ParentCommentSerializer(result, many=True)
-    #         return self.get_paginated_response(serializer.data)
-    #     else:
-    #         data = {
-    #             'messages': '해당 글을 찾을 수 없습니다.'
-    #         }
-    #         return Response(data=data, status=404)
-
-    def post(self, request, pk):
-        user_profile = self.get_user_profile(pk)
+    def post(self, request, user_profile_pk, post_pk):
+        user_profile = self.get_user_profile(user_profile_pk)
         if user_profile:
-            serializer = BaseCommentSerializer(data=request.data)
+            post = _get_post_object(post_pk)
+            if post:
+                serializer = BaseCommentSerializer(data=request.data)
 
-            if serializer.is_valid():
-                instance = serializer.save(writer=user_profile)
-                instance_url = reverse('comment:detail', args=(instance.id,))
+                if serializer.is_valid():
+                    instance = serializer.save(post=post, writer=user_profile)
+                    instance_url = reverse('comment:detail', args=(instance.id,))
+                    data = {
+                        'url': f'{host_domain}{instance_url}'
+                    }
+                    return Response(data, status=201)
+                return Response(serializer.errors, status=400)
+            else:
                 data = {
-                    'url': f'{host_domain}{instance_url}'
+                    'messages': '해당 글을 찾을 수 없습니다.'
                 }
-                return Response(data, status=201)
-            return Response(serializer.errors, status=400)
+                return Response(data=data, status=404)
         else:
             data = {
                 'messages': '해당 프로필을 찾을 수 없습니다.'
@@ -190,3 +196,46 @@ class UserProfileCommentListAPIView(APIView, CommentLimitOffsetPagination):
             return Response(data=data, status=404)
 
 
+class UserProfileChildCommentListAPIView(APIView, CommentLimitOffsetPagination):
+    permission_classes = [IsOwnerOnly]
+
+    def get_user_profile(self, pk):
+        try:
+            user_profile = UserProfile.objects.get(id=pk)
+            self.check_object_permissions(self.request, user_profile)
+            return user_profile
+        except ObjectDoesNotExist:
+            return None
+
+    def post(self, request, user_profile_pk, comment_pk):
+        user_profile = self.get_user_profile(user_profile_pk)
+        if user_profile:
+            comment = _get_comment_object(comment_pk)
+            if comment:
+                if comment.is_parent:
+                    serializer = BaseCommentSerializer(data=request.data)
+                    if serializer.is_valid():
+                        post = comment.post
+                        instance = serializer.save(post=post, writer=user_profile, parent_comment=comment)
+                        instance_url = reverse('comment:detail', args=(instance.id,))
+                        data = {
+                            'url': f'{host_domain}{instance_url}'
+                        }
+                        print(serializer.data)
+                        return Response(data, status=201)
+                    return Response(serializer.errors, status=400)
+                else:
+                    data = {
+                        'messages': '해당 댓글은 parent_comment가 아닙니다.'
+                    }
+                    return Response(data=data, status=400)
+            else:
+                data = {
+                    'messages': '해당 댓글을 찾을 수 없습니다.'
+                }
+                return Response(data=data, status=404)
+        else:
+            data = {
+                'messages': '해당 프로필을 찾을 수 없습니다.'
+            }
+            return Response(data=data, status=404)
