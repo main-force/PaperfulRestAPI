@@ -26,7 +26,7 @@ def _thumbnail_directory_path(instance, filename):
 
 class Post(models.Model, HitCountMixin):
     tags = models.ManyToManyField(Tag, blank=True, related_name='posts')
-    attentions = models.ManyToManyField(UserProfile, blank=True, related_name='attention_posts')
+    attentions = models.ManyToManyField(UserProfile, blank=True, related_name='attention_post_list')
     hit_count_generic = GenericRelation(
         HitCount, object_id_field='object_pk',
         related_query_name='hit_count_generic_relation'

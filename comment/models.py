@@ -10,7 +10,7 @@ COMMENT_STATUS = (
 
 
 class Comment(models.Model):
-    attentions = models.ManyToManyField(UserProfile, blank=True, related_name='attention_comments')
+    attentions = models.ManyToManyField(UserProfile, blank=True, related_name='attention_comment_list')
 
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
