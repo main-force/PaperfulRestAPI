@@ -16,4 +16,5 @@ class PostLimitOffsetPagination(LimitOffsetPagination):
             ('size', len(data)),
             ('start', self.get_offset(self.request)),
             ('limit', self.get_limit(self.request)),
+            ('total', self.count)
         ]))

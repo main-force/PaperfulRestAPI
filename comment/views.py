@@ -38,52 +38,6 @@ def _get_parent_comment_object(pk):
         return None
 
 
-class CommentListAPIView(APIView, CommentLimitOffsetPagination):
-    """
-    post의 댓글에 대한 처리 view.
-    특정 post의 id값을 pk로 전달 받음.
-    """
-    permission_classes = [IsAuthenticatedOrReadOnly]
-
-    def get(self, request, pk):
-        """
-        :param request: client's http request.
-        :param pk: post's id
-        :return: pk를 가진 post의 댓글들
-        """
-        post = _get_post_object(pk)
-        if post:
-            comment_list = post.comment_list.filter(status='O', parent_comment__isnull=True).order_by('-create_at')
-            result = self.paginate_queryset(comment_list, request, view=self)
-            serializer = ParentCommentSerializer(result, many=True)
-            return self.get_paginated_response(serializer.data)
-        else:
-            data = {
-                'messages': '해당 글을 찾을 수 없습니다.'
-            }
-            return Response(data=data, status=404)
-
-    def post(self, request, pk):
-        post = _get_post_object(pk)
-        if post:
-            set_user_profile_to_request(request)
-            set_post_to_request(request, post)
-            serializer = BaseCommentSerializer(data=request.data)
-
-            if serializer.is_valid():
-                instance = serializer.save()
-                instance_url = reverse('comment:detail', args=(instance.id,))
-                data = {
-                    'url': f'{host_domain}{instance_url}'
-                }
-                return Response(data, status=201)
-            return Response(serializer.errors, status=400)
-        else:
-            data = {
-                'messages': '해당 글을 찾을 수 없습니다.'
-            }
-            return Response(data=data, status=404)
-
 
 class ChildCommentListAPIView(APIView, CommentLimitOffsetPagination):
     """
@@ -168,11 +122,11 @@ class CommentDetailAPIView(APIView):
             return Response(serializer.data)
         else:
             data = {
-                'messages': '해당 댓글 또는 대댓글을 찾을 수 없습니다.'
+                'messages': '해당 댓글 또는 대 댓글을 찾을 수 없습니다.'
             }
             return Response(data=data, status=404)
 
-    def put(self, request, pk):
+    def patch(self, request, pk):
         pass
 
     def delete(self):

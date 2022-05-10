@@ -14,6 +14,8 @@ class IsOwnerOnly(BasePermission):
                 return True
             elif hasattr(obj, 'writer'):
                 return obj.writer.user == request.user
+            elif hasattr(obj, 'user'):
+                return obj.user == request.user
             elif obj.__class__ == get_user_model():
                 return obj.id == request.user.id
             return False
@@ -29,6 +31,8 @@ class IsOwnerOrReadOnly(BasePermission):
             if request.user.is_authenticated:
                 if request.user.is_staff:
                     return True
+                elif hasattr(obj, 'user'):
+                    return obj.user == request.user
                 elif hasattr(obj, 'writer'):
                     return obj.writer.user == request.user
                 elif obj.__class__ == get_user_model():

@@ -1,10 +1,16 @@
 from django.core.exceptions import ObjectDoesNotExist
+from hitcount.models import HitCount
+from hitcount.views import HitCountMixin
+
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from PaperfulRestAPI.config.domain import host_domain
-from PaperfulRestAPI.config.permissions import IsOwnerOrReadOnly
-from PaperfulRestAPI.tools.set_field import set_user_profile_to_request
+from PaperfulRestAPI.config.permissions import IsOwnerOrReadOnly, AllowAny, IsOwnerOnly
+from PaperfulRestAPI.tools.set_field import set_user_profile_to_request, set_post_to_request
+from comment.paginations import CommentLimitOffsetPagination
+from comment.serializers import ParentCommentSerializer, BaseCommentSerializer
+from comment.views import _get_post_object
 from post.models import Post
 from post.serializers import PostListSerializer, PostDetailSerializer, BasePostSerializer
 from rest_framework.views import APIView
@@ -12,9 +18,11 @@ from rest_framework.response import Response
 from post.paginations import PostLimitOffsetPagination
 from django.urls import reverse
 
+from userprofile.models import UserProfile
+
 
 class PostListAPIView(APIView, PostLimitOffsetPagination):
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [AllowAny]
 
     def get(self, request):
         post_list = Post.objects.filter(status='O').order_by('-create_at')
@@ -22,19 +30,6 @@ class PostListAPIView(APIView, PostLimitOffsetPagination):
         result = self.paginate_queryset(post_list, request, view=self)
         serializer = PostListSerializer(result, many=True)
         return self.get_paginated_response(serializer.data)
-
-    def post(self, request):
-        set_user_profile_to_request(request)
-        serializer = BasePostSerializer(data=request.data)
-
-        if serializer.is_valid():
-            instance = serializer.save()
-            instance_url = reverse('post:detail', args=(instance.id,))
-            data = {
-                'url': f'{host_domain}{instance_url}'
-            }
-            return Response(data, status=201)
-        return Response(serializer.errors, status=400)
 
 
 class PostDetailAPIView(APIView):
@@ -51,6 +46,8 @@ class PostDetailAPIView(APIView):
     def get(self, request, pk):
         post = self.get_object(pk)
         if post:
+            hit_count = post.hit_count
+            hit_count_response = HitCountMixin.hit_count(request, hit_count)
             serializer = PostDetailSerializer(post)
             return Response(serializer.data)
         else:
@@ -59,8 +56,61 @@ class PostDetailAPIView(APIView):
             }
             return Response(data=data, status=404)
 
-    def put(self, request, pk):
-        pass
+    def patch(self, request, pk):
+        post = self.get_object(pk)
+        if post:
+            serializer = BasePostSerializer(post, data=request.data, partial=True)
+            if serializer.is_valid():
+                instance = serializer.save()
+                instance_url = reverse('post:detail', args=(instance.id,))
+                data = {
+                    'url': f'{host_domain}{instance_url}'
+                }
+                return Response(data, status=200)
+            return Response(serializer.errors, status=400)
+        else:
+            data = {
+                'messages': '해당 글을 찾을 수 없습니다.'
+            }
+            return Response(data=data, status=404)
 
-    def delete(self):
-        pass
+    def delete(self, request, pk):
+        post = self.get_object(pk)
+        if post:
+            post.delete()
+            data = {
+                'messages': '삭제 완료'
+            }
+            return Response(data=data, status=204)
+        else:
+            data = {
+                'messages': '해당 글을 찾을 수 없습니다.'
+            }
+            return Response(data=data, status=404)
+
+
+class PostCommentListAPIView(APIView, CommentLimitOffsetPagination):
+    """
+    post의 댓글에 대한 처리 view.
+    특정 post의 id값을 pk로 전달 받음.
+    permission_classes는 전달받은 writer가 user의 uesr_profile인지를 검증하기 위함임.
+    """
+    permission_classes = [AllowAny]
+
+    def get(self, request, pk):
+        """
+        :param request: client's http request.
+        :param pk: post's id
+        :return: pk를 가진 post의 댓글들
+        """
+        post = _get_post_object(pk)
+        if post:
+            comment_list = post.comment_list.filter(status='O', parent_comment__isnull=True).order_by('-create_at')
+            result = self.paginate_queryset(comment_list, request, view=self)
+            serializer = ParentCommentSerializer(result, many=True)
+            return self.get_paginated_response(serializer.data)
+        else:
+            data = {
+                'messages': '해당 글을 찾을 수 없습니다.'
+            }
+            return Response(data=data, status=404)

@@ -8,25 +8,6 @@ from django.core.validators import validate_email
 from django.core import exceptions
 from django.shortcuts import get_object_or_404
 
-
-class UserProfileSerializer(serializers.ModelSerializer):
-    image = serializers.SerializerMethodField()
-
-    def get_image(self, obj):
-        if obj.image:
-            return f'{host_domain}{obj.image.url}'
-        else:
-            return None
-
-    class Meta:
-        model = UserProfile
-        fields = (
-            'id',
-            'nickname',
-            'image'
-        )
-
-
 class AuthCustomTokenSerializer(serializers.Serializer):
     email = serializers.CharField()
     password = serializers.CharField()
