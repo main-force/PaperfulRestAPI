@@ -48,7 +48,7 @@ class PostListSerializer(BasePostSerializer):
         return obj.hit_count.hits
 
     def get_attentions(self, obj):
-        return obj.attentions.all().count()
+        return obj.attention_user_profiles.all().count()
 
 
     class Meta:
@@ -94,7 +94,7 @@ class PostDetailSerializer(BasePostSerializer):
         return obj.hit_count.hits
 
     def get_attentions(self, obj):
-        return obj.attentions.all().count()
+        return obj.attention_user_profiles.all().count()
 
     class Meta:
         model = Post
