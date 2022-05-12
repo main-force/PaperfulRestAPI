@@ -28,8 +28,8 @@ def _thumbnail_directory_path(instance, filename):
 
 
 class Post(models.Model, HitCountMixin):
-    tags = models.ManyToManyField(Tag, blank=True, related_name='posts')
-    attentions = models.ManyToManyField(UserProfile, blank=True, related_name='attention_post_list')
+    tags = models.ManyToManyField(Tag, through='PostTag', blank=True, related_name='posts')
+    attention_user_profiles = models.ManyToManyField(UserProfile, through='Attention', blank=True, related_name='attention_posts')
     hit_count_generic = GenericRelation(
         HitCount, object_id_field='object_pk',
         related_query_name='hit_count_generic_relation'
@@ -52,4 +52,29 @@ class Post(models.Model, HitCountMixin):
     def current_hit_count(self):
         return self.hit_count.hits
 
+
+class Attention(models.Model):
+    user_profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='post_attention_list_by_user_profile')
+    post = models.ForeignKey('post.Post', on_delete=models.CASCADE, related_name='post_attention_list_by_post')
+    create_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ('-update_at',)
+
+    def __str__(self):
+        return f'[{self.user_profile.nickname}]{self.post.title}'
+
+
+class PostTag(models.Model):
+    post = models.ForeignKey('post.Post', on_delete=models.CASCADE)
+    tag = models.ForeignKey('Tag', on_delete=models.CASCADE)
+    create_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ('-update_at',)
+
+    def __str__(self):
+        return f'[{self.tag.name}]{self.post.title}'
 
