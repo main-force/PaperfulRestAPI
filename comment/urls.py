@@ -5,5 +5,5 @@ app_name = 'comment'
 
 urlpatterns = [
     path('/<int:pk>', views.CommentDetailAPIView.as_view(), name='detail'),
-    path('/<int:pk>/child-comments', views.ChildCommentListAPIView.as_view(), name='child-comments'),
+    path('/<int:pk>/child-comments', views.ChildCommentListAPIView.as_view(), name='child_comments'),
 ]

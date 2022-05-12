@@ -45,7 +45,7 @@ INSTALLED_APPS += [
     'post.apps.PostConfig',
     'account.apps.AccountConfig',
     'userprofile.apps.UserprofileConfig',
-    'comment.apps.CommentConfig'
+    'comment.apps.CommentConfig',
 ]
 
 MIDDLEWARE = [

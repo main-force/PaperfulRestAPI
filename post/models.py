@@ -23,6 +23,9 @@ class Tag(models.Model):
 def _thumbnail_directory_path(instance, filename):
     return 'posts/{}/thumbnail/{}'.format(instance.id, filename)
 
+# class Attention(models.Model):
+#
+
 
 class Post(models.Model, HitCountMixin):
     tags = models.ManyToManyField(Tag, blank=True, related_name='posts')

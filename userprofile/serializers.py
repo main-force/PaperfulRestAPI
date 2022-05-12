@@ -19,12 +19,16 @@ class BaseUserProfileSerializer(serializers.ModelSerializer):
 
 class UserProfileDetailSerializer(BaseUserProfileSerializer):
     image = serializers.SerializerMethodField()
+    num_subscribers = serializers.SerializerMethodField()
 
     def get_image(self, obj):
         if obj.image:
             return f'{host_domain}{obj.image.url}'
         else:
             return None
+
+    def get_num_subscribers(self, obj):
+        return obj.subscribers.all().count()
 
     class Meta:
         model = UserProfile
@@ -33,4 +37,5 @@ class UserProfileDetailSerializer(BaseUserProfileSerializer):
             'nickname',
             'image',
             'intro',
+            'num_subscribers'
         )

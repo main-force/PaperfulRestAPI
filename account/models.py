@@ -34,7 +34,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True)
     username = models.CharField(max_length=30)
     is_active = models.BooleanField(default=True)
-    date_joined = models.DateTimeField(auto_now_add=True)
+    create_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
 
     objects = UserManager()
 
@@ -42,7 +43,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['username', ]
 
     class Meta:
-        ordering = ('-date_joined',)
+        ordering = ('-create_at',)
 
     def __str__(self):
         return f'{self.username}[{self.email}]'
