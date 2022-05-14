@@ -290,8 +290,14 @@ class UserProfileAttentionPostListAPIView(APIView, PostLimitOffsetPagination):
                 post_pk = request.POST.get('post_id')
                 post = _get_post_object(post_pk)
                 if post:
-                    user_profile.attention_posts.add(post)
-                    return Response(status=204)
+                    if _get_post_in_user_profile_attention_posts(user_profile, pk):
+                        data = {
+                            'messages': '이미 주목중인 글입니다.'
+                        }
+                        return Response(data=data, status=400)
+                    else:
+                        user_profile.attention_posts.add(post)
+                        return Response(status=204)
                 else:
                     data = {
                         'messages': '해당 글을 찾을 수 없습니다.'
@@ -392,8 +398,14 @@ class UserProfileAttentionCommentListAPIView(APIView):
                 comment_pk = request.POST.get('comment_id')
                 comment = _get_comment_object(comment_pk)
                 if comment:
-                    user_profile.attention_comments.add(comment)
-                    return Response(status=204)
+                    if _get_comment_in_user_profile_attention_comments(user_profile, pk):
+                        data = {
+                            'messages': '이미 주목중인 댓글입니다.'
+                        }
+                        return Response(data=data, status=400)
+                    else:
+                        user_profile.attention_comments.add(comment)
+                        return Response(status=204)
                 else:
                     data = {
                         'messages': '해당 댓글을 찾을 수 없습니다.'

@@ -34,18 +34,18 @@ class ObtainAuthToken(APIView):
             'token': token.key,
         }
 
-        return Response(results)
+        return Response(results, status=201)
 
 
 class Logout(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
+    def post(self, request):
         request.user.auth_token.delete()
         results = {
-            'detail': '로그아웃이 완료되었습니다.'
+            'messages': '로그아웃이 완료되었습니다.'
         }
-        return Response(status=status.HTTP_200_OK, data=results)
+        return Response(status=204, data=results)
 
 
 obtain_auth_token = ObtainAuthToken.as_view()

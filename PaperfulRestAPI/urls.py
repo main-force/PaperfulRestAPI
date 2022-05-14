@@ -22,8 +22,8 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('posts', include('post.urls')),
     path('auth', obtain_auth_token, name='obtain-auth-token'),
+    path('posts', include('post.urls')),
     path('logout', Logout.as_view(), name='logout'),
     path('userprofiles', include('userprofile.urls')),
     path('api-auth', include('rest_framework.urls', namespace='rest_framework')),
