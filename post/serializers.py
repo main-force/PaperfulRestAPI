@@ -1,6 +1,7 @@
+from django.core.checks import Tags
 from rest_framework import serializers
 
-from post.models import Post
+from post.models import Post, Tag
 from django.utils.text import Truncator
 
 from PaperfulRestAPI.config.domain import host_domain
@@ -8,6 +9,8 @@ from userprofile.serializers import UserProfileDetailSerializer
 
 
 class BasePostSerializer(serializers.ModelSerializer):
+    tags = serializers.PrimaryKeyRelatedField(queryset=Tag.objects.all(), many=True)
+
     class Meta:
         model = Post
         fields = [
