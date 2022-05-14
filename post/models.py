@@ -1,6 +1,8 @@
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from hitcount.models import HitCountMixin, HitCount
+from django.urls import reverse
+
 
 from account.models import User
 from userprofile.models import UserProfile
@@ -51,6 +53,9 @@ class Post(models.Model, HitCountMixin):
 
     def current_hit_count(self):
         return self.hit_count.hits
+
+    def get_absolute_url(self):
+        return reverse('post:detail', args=(self.id,))
 
 
 class Attention(models.Model):

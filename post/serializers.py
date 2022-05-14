@@ -32,6 +32,7 @@ class PostListSerializer(BasePostSerializer):
     num_comments = serializers.SerializerMethodField()
     hits = serializers.SerializerMethodField()
     attentions = serializers.SerializerMethodField()
+    href = serializers.SerializerMethodField()
 
     def get_thumbnail(self, obj):
         if obj.thumbnail:
@@ -57,6 +58,11 @@ class PostListSerializer(BasePostSerializer):
     def get_attentions(self, obj):
         return obj.attention_user_profiles.all().count()
 
+    def get_href(self, obj):
+        url = obj.get_absolute_url()
+        print(url)
+        return f'{host_domain}{url}'
+
 
     class Meta:
         model = Post
@@ -73,7 +79,8 @@ class PostListSerializer(BasePostSerializer):
             'status',
             'num_comments',
             'hits',
-            'attentions'
+            'attentions',
+            'href'
         ]
 
 
