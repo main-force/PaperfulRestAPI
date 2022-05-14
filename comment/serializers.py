@@ -66,6 +66,7 @@ class ParentCommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = (
             'id',
+            'is_parent',
             'post_id',
             'writer',
             'writer_mentions',
@@ -80,12 +81,16 @@ class ParentCommentSerializer(serializers.ModelSerializer):
 
 class ChildCommentSerializer(serializers.ModelSerializer):
     post_id = serializers.SerializerMethodField()
+    parent_comment_id = serializers.SerializerMethodField()
     writer_mentions = serializers.SerializerMethodField()
     writer = serializers.SerializerMethodField()
     attentions = serializers.SerializerMethodField()
 
     def get_post_id(self, obj):
         return obj.post.id
+
+    def get_parent_comment_id(self, obj):
+        return obj.parent_comment.id
 
     def get_writer_mentions(self, obj):
         return UserProfileDetailSerializer(obj.writer_mentions, many=True).data
@@ -100,6 +105,8 @@ class ChildCommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = [
             'id',
+            'is_parent',
+            'parent_comment_id',
             'post_id',
             'writer',
             'create_at',
