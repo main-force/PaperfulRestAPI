@@ -280,7 +280,7 @@ class UserProfileAttentionPostListAPIView(APIView, PostLimitOffsetPagination):
     def get(self, request, pk):
         user_profile = self.get_user_profile(pk)
         if user_profile:
-            post_list = user_profile.attention_post_list.filter(status='O').order_by('-create_at')
+            post_list = user_profile.attention_posts.filter(status='O').order_by('-create_at')
             result = self.paginate_queryset(post_list, request, view=self)
             serializer = PostListSerializer(result, many=True)
             return self.get_paginated_response(serializer.data)
