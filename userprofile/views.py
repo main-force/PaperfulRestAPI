@@ -615,7 +615,7 @@ class UserProfileSubscriptionListAPIView(APIView, UserProfileLimitOffsetPaginati
                         }
                         return Response(data=data, status=400)
                     else:
-                        user_profile.subscriptions.add(user_profile)
+                        user_profile.subscriptions.add(target_user_profile)
                         return Response(status=204)
                 else:
                     data = {
