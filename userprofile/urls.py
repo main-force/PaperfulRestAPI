@@ -20,6 +20,6 @@ urlpatterns = [
     path('/<int:user_profile_pk>/posts/<int:post_pk>/comments', views.UserProfileCommentListAPIView.as_view(), name='comments'),
     path('/<int:user_profile_pk>/comments/<int:comment_pk>', views.UserProfileChildCommentListAPIView.as_view(), name='child_comments'),
 
-    # path('/<int:pk>/subscriptions/user_profiles', views.UserProfileSubscriptionListAPIView.as_view(), name='subscription_user_profiles'),
-    # path('/<int:user_profile_pk>/subscriptions/user_profiles/<int:subscription_user_profile_pk>', views.UserProfileSubscriptionDetailAPIView.as_view(), name='subscription_user_profile_detail')
+    path('/<int:pk>/subscriptions/userprofiles', views.UserProfileSubscriptionListAPIView.as_view(), name='subscription_user_profiles'),
+    path('/<int:user_profile_pk>/subscriptions/userprofiles/<int:target_user_profile_pk>', views.UserProfileSubscriptionDetailAPIView.as_view(), name='subscription_user_profile_detail')
 ]

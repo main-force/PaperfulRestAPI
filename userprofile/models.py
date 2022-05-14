@@ -14,13 +14,13 @@ class UserProfile(models.Model):
     nickname = models.CharField(max_length=16, unique=True)
     intro = models.CharField(max_length=150, blank=True)
     image = models.ImageField(null=True, blank=True, upload_to=_userprofile_image_directory_path)
-    subscribers = models.ManyToManyField('self', through='Subscribe', symmetrical=False, blank=True)
+    subscribers = models.ManyToManyField('self', through='Subscribe', symmetrical=False, blank=True, related_name='subscriptions')
     bookmarks = models.ManyToManyField('post.Post', through='Bookmark', blank=True,
                                        related_name='bookmark_user_profiles')
 
-    @property
-    def subscriptions(self):
-        return self.subscriptions_subscribe.values_list('subscription')
+    # @property
+    # def subscriptions(self):
+    #     return self.subscriptions_subscribe.order_by('-create_at').values_list('subscription')
 
 
     def __str__(self):

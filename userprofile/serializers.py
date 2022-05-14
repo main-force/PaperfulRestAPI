@@ -13,7 +13,7 @@ class BaseUserProfileSerializer(serializers.ModelSerializer):
             'intro'
         )
         read_only_fields = [
-            'id',
+            'id'
         ]
 
 

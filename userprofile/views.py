@@ -15,6 +15,7 @@ from post.models import Post
 from post.paginations import PostLimitOffsetPagination
 from post.serializers import PostListSerializer, BasePostSerializer
 from userprofile.models import UserProfile, Subscribe, Bookmark
+from userprofile.paginations import UserProfileLimitOffsetPagination
 from userprofile.serializers import UserProfileDetailSerializer, BaseUserProfileSerializer
 from django.urls import reverse
 from comment.models import Comment
@@ -205,19 +206,12 @@ class UserProfileBookmarkPostDetailAPIView(APIView):
         except ObjectDoesNotExist:
             return None
 
-    def get_post_in_user_profile_bookmarks(self, user_profile, post_pk):
-        try:
-            post = user_profile.bookmarks.get(pk=post_pk, status='O')
-            return post
-        except ObjectDoesNotExist:
-            return None
-
     def get(self, request, user_profile_pk, post_pk):
         user_profile = self.get_user_profile(user_profile_pk)
         if user_profile:
             post = _get_post_object(post_pk)
             if post:
-                if self.get_post_in_user_profile_bookmarks(user_profile, post_pk):
+                if _get_post_in_user_profile_bookmarks(user_profile, post_pk):
                     data = {
                         'is_bookmarked': True
                     }
@@ -243,7 +237,7 @@ class UserProfileBookmarkPostDetailAPIView(APIView):
         if user_profile:
             post = _get_post_object(post_pk)
             if post:
-                if self.get_post_in_user_profile_bookmarks(user_profile, post_pk):
+                if _get_post_in_user_profile_bookmarks(user_profile, post_pk):
                     user_profile.bookmarks.remove(post)
                     return Response(status=204)
                 else:
@@ -326,19 +320,12 @@ class UserProfileAttentionPostDetailAPIView(APIView):
         except ObjectDoesNotExist:
             return None
 
-    def get_post_in_user_profile_attention_posts(self, user_profile, post_pk):
-        try:
-            post = user_profile.attention_posts.get(pk=post_pk, status='O')
-            return post
-        except ObjectDoesNotExist:
-            return None
-
     def get(self, request, user_profile_pk, post_pk):
         user_profile = self.get_user_profile(user_profile_pk)
         if user_profile:
             post = _get_post_object(post_pk)
             if post:
-                if self.get_post_in_user_profile_attention_posts(user_profile, post_pk):
+                if _get_post_in_user_profile_attention_posts(user_profile, post_pk):
                     data = {
                         'is_attentioned': True
                     }
@@ -364,7 +351,7 @@ class UserProfileAttentionPostDetailAPIView(APIView):
         if user_profile:
             post = _get_post_object(post_pk)
             if post:
-                if self.get_post_in_user_profile_attention_posts(user_profile, post_pk):
+                if _get_post_in_user_profile_attention_posts(user_profile, post_pk):
                     user_profile.attention_posts.remove(post)
                     return Response(status=204)
                 else:
@@ -395,13 +382,6 @@ class UserProfileAttentionCommentListAPIView(APIView):
             user_profile = UserProfile.objects.get(id=pk)
             self.check_object_permissions(self.request, user_profile)
             return user_profile
-        except ObjectDoesNotExist:
-            return None
-
-    def get_comment_in_user_profile_attention_comments(self, user_profile, comment_pk):
-        try:
-            comment = user_profile.attention_comments.get(pk=comment_pk, status='O')
-            return comment
         except ObjectDoesNotExist:
             return None
 
@@ -442,19 +422,13 @@ class UserProfileAttentionCommentDetailAPIView(APIView):
         except ObjectDoesNotExist:
             return None
 
-    def get_comment_in_user_profile_attention_comments(self, user_profile, comment_pk):
-        try:
-            comment = user_profile.attention_comments.get(pk=comment_pk, status='O')
-            return comment
-        except ObjectDoesNotExist:
-            return None
 
     def get(self, request, user_profile_pk, comment_pk):
         user_profile = self.get_user_profile(user_profile_pk)
         if user_profile:
             comment = _get_comment_object(comment_pk)
             if comment:
-                if self.get_comment_in_user_profile_attention_comments(user_profile, comment_pk):
+                if _get_comment_in_user_profile_attention_comments(user_profile, comment_pk):
                     data = {
                         'is_attentioned': True
                     }
@@ -480,7 +454,7 @@ class UserProfileAttentionCommentDetailAPIView(APIView):
         if user_profile:
             comment = _get_comment_object(comment_pk)
             if comment:
-                if self.get_comment_in_user_profile_attention_comments(user_profile, comment_pk):
+                if _get_comment_in_user_profile_attention_comments(user_profile, comment_pk):
                     user_profile.attention_comments.remove(comment)
                     return Response(status=204)
                 else:
@@ -584,6 +558,120 @@ class UserProfileChildCommentListAPIView(APIView, CommentLimitOffsetPagination):
             return Response(data=data, status=404)
 
 
+class UserProfileSubscriptionListAPIView(APIView, UserProfileLimitOffsetPagination):
+    permission_classes = [IsOwnerOnly]
+
+    def get_user_profile(self, pk):
+        try:
+            user_profile = UserProfile.objects.get(id=pk)
+            self.check_object_permissions(self.request, user_profile)
+            return user_profile
+        except ObjectDoesNotExist:
+            return None
+
+    def get(self, request, pk):
+        user_profile = self.get_user_profile(pk)
+        if user_profile:
+            subscription_list = user_profile.subscriptions.order_by('-create_at')
+            result = self.paginate_queryset(subscription_list, request, view=self)
+            serializer = BaseUserProfileSerializer(result, many=True)
+            return self.get_paginated_response(serializer.data)
+        else:
+            data = {
+                'messages': '해당 프로필을 찾을 수 없습니다.'
+            }
+            return Response(data=data, status=404)
+
+    def post(self, request, pk):
+        user_profile = self.get_user_profile(pk)
+        if user_profile:
+            if 'user_profile_id' in request.POST:
+                target_user_profile_pk = request.POST.get('user_profile_id')
+                target_user_profile = _get_user_profile_object(target_user_profile_pk)
+                if target_user_profile:
+                    if _get_user_profile_in_target_user_profile_subscriptions(user_profile, pk):
+                        data = {
+                            'messages': '이미 구독중인 유저프로필입니다.'
+                        }
+                        return Response(data=data, status=400)
+                    else:
+                        user_profile.subscriptions.add(user_profile)
+                        return Response(status=204)
+                else:
+                    data = {
+                        'messages': '구독 하고자하는 유저프로필을 찾을 수 없습니다.'
+                    }
+                    return Response(data=data, status=404)
+            else:
+                data = {
+                    'comment_id': {'messages': '이 필드는 필수 입력 필드입니다.'}
+                }
+                return Response(data=data, status=400)
+
+
+class UserProfileSubscriptionDetailAPIView(APIView):
+    permission_classes = [IsOwnerOnly]
+
+    def get_user_profile(self, pk):
+        try:
+            user_profile = UserProfile.objects.get(id=pk)
+            self.check_object_permissions(self.request, user_profile)
+            return user_profile
+        except ObjectDoesNotExist:
+            return None
+
+    def get(self, request, user_profile_pk, target_user_profile_pk):
+        user_profile = self.get_user_profile(user_profile_pk)
+        if user_profile:
+            target_user_profile = _get_user_profile_object(target_user_profile_pk)
+            if target_user_profile:
+                if _get_user_profile_in_target_user_profile_subscriptions(user_profile, target_user_profile_pk):
+                    data = {
+                        'is_subscribe': True
+                    }
+                    return Response(data=data, status=200)
+                else:
+                    data = {
+                        'is_subscribe': False
+                    }
+                    return Response(data=data, status=404)
+            else:
+                data = {
+                    'messages': '구독하고자하는 유저프로필을 찾을 수 없습니다.'
+                }
+                return Response(data=data, status=404)
+        else:
+            data = {
+                'messages': '해당 프로필을 찾을 수 없습니다.'
+            }
+            return Response(data=data, status=404)
+
+    def delete(self, request, user_profile_pk, target_user_profile_pk):
+        user_profile = self.get_user_profile(user_profile_pk)
+        if user_profile:
+            target_user_profile = _get_user_profile_object(target_user_profile_pk)
+            if target_user_profile:
+                if _get_user_profile_in_target_user_profile_subscriptions(user_profile, target_user_profile_pk):
+                    user_profile.subscriptions.remove(target_user_profile)
+                    return Response(status=204)
+                else:
+                    data = {
+                        'messages': '유저프로필이 구독한 유저프로필이 아닙니다.'
+                    }
+                    return Response(data=data, status=404)
+            else:
+                data = {
+                    'messages': '제거하고자하는 유저 프로필을 찾을 수 없습니다.'
+                }
+                return Response(data=data, status=404)
+
+        else:
+            data = {
+                'messages': '해당 프로필을 찾을 수 없습니다.'
+            }
+            return Response(data=data, status=404)
+
+
 def _get_post_object(pk):
     try:
         post = Post.objects.get(id=pk, status='O')
@@ -596,5 +684,53 @@ def _get_comment_object(pk):
     try:
         comment = Comment.objects.get(id=pk, status='O')
         return comment
+    except ObjectDoesNotExist:
+        return None
+
+
+def _get_user_profile_object(pk):
+    try:
+        user_profile = UserProfile.objects.get(id=pk)
+        return user_profile
+    except ObjectDoesNotExist:
+        return None
+
+
+def _get_comment_in_user_profile_attention_comments(user_profile, comment_pk):
+    try:
+        comment = user_profile.attention_comments.get(pk=comment_pk, status='O')
+        return comment
+    except ObjectDoesNotExist:
+        return None
+
+
+def _get_post_in_user_profile_attention_posts(user_profile, post_pk):
+    try:
+        post = user_profile.attention_posts.get(pk=post_pk, status='O')
+        return post
+    except ObjectDoesNotExist:
+        return None
+
+
+def _get_post_in_user_profile_bookmarks(user_profile, post_pk):
+    try:
+        post = user_profile.bookmarks.get(pk=post_pk, status='O')
+        return post
+    except ObjectDoesNotExist:
+        return None
+
+
+def _get_user_profile_in_target_user_profile_subscribers(target_user_profile, user_profile_pk):
+    try:
+        user_profile = target_user_profile.subscribers.get(pk=user_profile_pk)
+        return user_profile
+    except ObjectDoesNotExist:
+        return None
+
+
+def _get_user_profile_in_target_user_profile_subscriptions(target_user_profile, user_profile_pk):
+    try:
+        user_profile = target_user_profile.subscriptions.get(pk=user_profile_pk)
+        return user_profile
     except ObjectDoesNotExist:
         return None
