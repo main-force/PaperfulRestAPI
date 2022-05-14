@@ -594,7 +594,7 @@ class UserProfileSubscriptionListAPIView(APIView, UserProfileLimitOffsetPaginati
         if user_profile:
             subscription_list = user_profile.subscriptions.order_by('-create_at')
             result = self.paginate_queryset(subscription_list, request, view=self)
-            serializer = BaseUserProfileSerializer(result, many=True)
+            serializer = UserProfileDetailSerializer(result, many=True)
             return self.get_paginated_response(serializer.data)
         else:
             data = {
