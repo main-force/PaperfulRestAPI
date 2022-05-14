@@ -43,7 +43,7 @@ class Logout(APIView):
     def post(self, request):
         request.user.auth_token.delete()
         results = {
-            'messages': '로그아웃이 완료되었습니다.'
+            'detail': '로그아웃이 완료되었습니다.'
         }
         return Response(status=204, data=results)
 
