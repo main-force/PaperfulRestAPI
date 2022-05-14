@@ -51,7 +51,7 @@ class ParentCommentSerializer(serializers.ModelSerializer):
 
     def get_link_child_comments(self, obj):
         if obj.child_comment_list.exists():
-            url_child_comments = reverse('comment:child-comments', args=(obj.id,))
+            url_child_comments = reverse('comment:child_comments', args=(obj.id,))
             return f'{host_domain}{url_child_comments}'
         else:
             return None
