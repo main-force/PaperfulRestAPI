@@ -176,8 +176,16 @@ class UserProfileBookmarkPostListAPIView(APIView, PostLimitOffsetPagination):
                 post_pk = request.POST.get('post_id')
                 post = _get_post_object(post_pk)
                 if post:
-                    user_profile.bookmarks.add(post)
-                    return Response(status=204)
+                    if _get_post_in_user_profile_bookmarks(user_profile, post_pk):
+                        data = {
+                            'messages': '이미 책갈피한 글입니다.'
+                        }
+                        return Response(data=data, status=400)
+
+                    else:
+                        user_profile.bookmarks.add(post)
+                        return Response(status=204)
+
                 else:
                     data = {
                         'messages': '해당 글을 찾을 수 없습니다.'
@@ -242,7 +250,7 @@ class UserProfileBookmarkPostDetailAPIView(APIView):
                     return Response(status=204)
                 else:
                     data = {
-                        'messages': '유저프로필이 북마크한 글이 아닙니다.'
+                        'messages': '유저프로필이 책갈피한 글이 아닙니다.'
                     }
                     return Response(data=data, status=404)
             else:
