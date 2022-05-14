@@ -609,7 +609,7 @@ class UserProfileSubscriptionListAPIView(APIView, UserProfileLimitOffsetPaginati
                 target_user_profile_pk = request.POST.get('user_profile_id')
                 target_user_profile = _get_user_profile_object(target_user_profile_pk)
                 if target_user_profile:
-                    if _get_user_profile_in_target_user_profile_subscriptions(user_profile, pk):
+                    if _get_user_profile_in_user_profile_subscriptions(user_profile, target_user_profile_pk):
                         data = {
                             'messages': '이미 구독중인 유저프로필입니다.'
                         }
@@ -645,7 +645,7 @@ class UserProfileSubscriptionDetailAPIView(APIView):
         if user_profile:
             target_user_profile = _get_user_profile_object(target_user_profile_pk)
             if target_user_profile:
-                if _get_user_profile_in_target_user_profile_subscriptions(user_profile, target_user_profile_pk):
+                if _get_user_profile_in_user_profile_subscriptions(user_profile, target_user_profile_pk):
                     data = {
                         'is_subscribe': True
                     }
@@ -671,7 +671,7 @@ class UserProfileSubscriptionDetailAPIView(APIView):
         if user_profile:
             target_user_profile = _get_user_profile_object(target_user_profile_pk)
             if target_user_profile:
-                if _get_user_profile_in_target_user_profile_subscriptions(user_profile, target_user_profile_pk):
+                if _get_user_profile_in_user_profile_subscriptions(user_profile, target_user_profile_pk):
                     user_profile.subscriptions.remove(target_user_profile)
                     return Response(status=204)
                 else:
@@ -748,9 +748,9 @@ def _get_user_profile_in_target_user_profile_subscribers(target_user_profile, us
         return None
 
 
-def _get_user_profile_in_target_user_profile_subscriptions(target_user_profile, user_profile_pk):
+def _get_user_profile_in_user_profile_subscriptions(user_profile, subscription_user_profile_pk):
     try:
-        user_profile = target_user_profile.subscriptions.get(pk=user_profile_pk)
-        return user_profile
+        subscription_user_profile = user_profile.subscriptions.get(pk=subscription_user_profile_pk)
+        return subscription_user_profile
     except ObjectDoesNotExist:
         return None
