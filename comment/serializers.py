@@ -7,6 +7,7 @@ from rest_framework.exceptions import ValidationError
 
 from PaperfulRestAPI.config.domain import host_domain
 from post.models import Post
+from userprofile.models import UserProfile
 from userprofile.serializers import UserProfileDetailSerializer
 
 
@@ -15,6 +16,8 @@ def logical_xor(x, y):
 
 
 class BaseCommentSerializer(serializers.ModelSerializer):
+    writer_mentions = serializers.PrimaryKeyRelatedField(queryset=UserProfile.objects.all(), many=True)
+
     class Meta:
         model = Comment
         fields = [
