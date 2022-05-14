@@ -10,7 +10,14 @@ from userprofile.serializers import UserProfileDetailSerializer
 class BasePostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
-        exclude = ['writer']
+        fields = [
+            'title',
+            'intro',
+            'thumbnail',
+            'content',
+            'status',
+            'tags'
+        ]
         read_only_fields = [
             'id',
             'create_at',
