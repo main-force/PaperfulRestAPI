@@ -10,7 +10,20 @@ from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework import parsers, status
 from rest_framework import renderers
-from account.serializers import AuthCustomTokenSerializer
+from account.serializers import AuthCustomTokenSerializer, UserSignupSerializer
+from rest_framework import serializers
+from PaperfulRestAPI.config.permissions import AllowAny
+
+
+class Signup(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = UserSignupSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(status=201)
 
 
 class ObtainAuthToken(APIView):
