@@ -8,7 +8,7 @@ class PostAdmin(admin.ModelAdmin):
     search_fields = ('title', 'user__email')
 
     def formfield_for_dbfield(self, db_field, request, **kwargs):
-        if db_field.name in ['title', 'content']:
+        if db_field.name in ['content']:
             kwargs['strip'] = False
         return super().formfield_for_dbfield(db_field, request, **kwargs)
 

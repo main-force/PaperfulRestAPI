@@ -57,6 +57,9 @@ class BasePostSerializer(serializers.ModelSerializer):
             'create_at',
             'update_at'
         ]
+        extra_kwargs = {
+            'content': {'trim_whitespace': False}
+        }
 
 
 class PostListSerializer(serializers.ModelSerializer):
