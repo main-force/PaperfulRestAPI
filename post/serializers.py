@@ -37,7 +37,7 @@ class DynamicFieldsPostSerializer(serializers.ModelSerializer):
 
 
 class BasePostSerializer(serializers.ModelSerializer):
-    tags = serializers.PrimaryKeyRelatedField(queryset=Tag.objects.all(), many=True)
+    # tags = serializers.PrimaryKeyRelatedField(queryset=Tag.objects.all(), many=True)
 
     class Meta:
         model = Post
