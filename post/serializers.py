@@ -1,11 +1,39 @@
 from django.core.checks import Tags
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
+import post.models
 from post.models import Post, Tag
 from django.utils.text import Truncator
 
 from PaperfulRestAPI.config.domain import host_domain
 from userprofile.serializers import UserProfileDetailSerializer
+
+
+class DynamicFieldsPostSerializer(serializers.ModelSerializer):
+    """
+    field control Serializer.
+    반드시 상속받음
+    """
+    diary_only_field = post.models.only_fields.get('diary')
+
+    def to_representation(self, instance):
+        """
+        diary가 아닐 때 보여주지 않을 데이터를 제거함
+        추후 모듈로 바꿔야함.
+        """
+        ret = super().to_representation(instance)
+
+        try:
+            object_type = ret.get('object_type', None)
+            if object_type:
+                if object_type != 'diary':
+                    for field_name in self.diary_only_field:
+                        if field_name in ret:
+                            ret.pop(field_name)
+        except BaseException:
+            raise KeyError('object_type을 key값으로 가지고 있지 않습니다.')
+        return ret
 
 
 class BasePostSerializer(serializers.ModelSerializer):
@@ -14,12 +42,15 @@ class BasePostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = [
+            'object_type',
             'title',
             'intro',
             'thumbnail',
             'content',
             'status',
-            'tags'
+            'tags',
+            'diary_day',
+            'weather'
         ]
         read_only_fields = [
             'id',
@@ -28,7 +59,7 @@ class BasePostSerializer(serializers.ModelSerializer):
         ]
 
 
-class PostListSerializer(BasePostSerializer):
+class PostListSerializer(serializers.ModelSerializer):
     thumbnail = serializers.SerializerMethodField()
     intro = serializers.SerializerMethodField()
     writer = serializers.SerializerMethodField()
@@ -63,14 +94,13 @@ class PostListSerializer(BasePostSerializer):
 
     def get_href(self, obj):
         url = obj.get_absolute_url()
-        print(url)
         return f'{host_domain}{url}'
-
 
     class Meta:
         model = Post
         fields = [
             'id',
+            'object_type',
             'tags',
             'title',
             'thumbnail',
@@ -87,13 +117,16 @@ class PostListSerializer(BasePostSerializer):
         ]
 
 
-class PostDetailSerializer(BasePostSerializer):
+class PostDetailSerializer(DynamicFieldsPostSerializer):
+    object_type = serializers.SerializerMethodField()
     writer = serializers.SerializerMethodField()
     thumbnail = serializers.SerializerMethodField()
     num_comments = serializers.SerializerMethodField()
     hits = serializers.SerializerMethodField()
     attentions = serializers.SerializerMethodField()
 
+    def get_object_type(self, obj):
+        return obj.object_type
 
     def get_writer(self, obj):
         return UserProfileDetailSerializer(obj.writer).data
@@ -117,6 +150,7 @@ class PostDetailSerializer(BasePostSerializer):
         model = Post
         fields = [
             'id',
+            'object_type',
             'tags',
             'title',
             'thumbnail',
@@ -128,5 +162,7 @@ class PostDetailSerializer(BasePostSerializer):
             'status',
             'num_comments',
             'hits',
-            'attentions'
+            'attentions',
+            'diary_day',
+            'weather'
         ]

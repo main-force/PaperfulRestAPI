@@ -1,18 +1,15 @@
+import rest_framework.exceptions
 from django.contrib.contenttypes.fields import GenericRelation
+from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 from hitcount.models import HitCountMixin, HitCount
 from django.urls import reverse
 
+from django.core.exceptions import ValidationError
+
 
 from account.models import User
 from userprofile.models import UserProfile
-
-POST_STATUS = (
-    ('T', 'Temporary save'),
-    ('O', 'Open'),
-    ('P', 'Private'),
-    ('B', 'Ban'),
-)
 
 
 class Tag(models.Model):
@@ -28,8 +25,26 @@ def _thumbnail_directory_path(instance, filename):
 # class Attention(models.Model):
 #
 
+POST_STATUS = (
+    ('T', 'Temporary save'),
+    ('O', 'Open'),
+    ('P', 'Private'),
+    ('B', 'Ban'),
+)
+
+POST_OBJECT_TYPE = (
+    ('general', 'General object'),
+    ('short_text', 'Short text object'),
+    ('diary', 'Diary object'),
+)
+
+only_fields = {
+    'diary': ['diary_day', 'weather']
+}
+
 
 class Post(models.Model, HitCountMixin):
+    object_type = models.CharField(choices=POST_OBJECT_TYPE, max_length=10)
     tags = models.ManyToManyField(Tag, through='PostTag', blank=True, related_name='posts')
     attention_user_profiles = models.ManyToManyField(UserProfile, through='Attention', blank=True, related_name='attention_posts')
     hit_count_generic = GenericRelation(
@@ -48,14 +63,41 @@ class Post(models.Model, HitCountMixin):
 
     status = models.CharField(default='T', max_length=1, choices=POST_STATUS)
 
-    def __str__(self):
-        return self.title
+    # diary field
+    diary_day = models.TextField(blank=True)
+    weather = models.TextField(blank=True)
 
     def current_hit_count(self):
         return self.hit_count.hits
 
+    def __str__(self):
+        return self.title
+
     def get_absolute_url(self):
         return reverse('post:detail', args=(self.id,))
+
+    def clean(self):
+        try:
+            object_type = self.object_type
+            if object_type:
+                if object_type != 'diary':
+                    if self.diary_day and self.weather:
+                        raise ValidationError({
+                            'diary_day': f'{object_type} 오브젝트는 diary_day을 가질 수 없습니다.',
+                            'weather': f'{object_type} 오브젝트는 weather을 가질 수 없습니다.'
+                        })
+                    elif self.weather:
+                        raise ValidationError({'weather': f'{object_type} 오브젝트는 weather을 가질 수 없습니다.'})
+                    elif self.diary_day:
+                        raise ValidationError({'diary_day': f'{object_type} 오브젝트는 diary_day을 가질 수 없습니다.'})
+        except FieldDoesNotExist:
+            raise ValidationError({'object_type': 'object_type은 필수 입력 필드입니다.'})
+
+    # model serializer의 validation 체크를 model 레벨에서
+    # 실행할 수 있도록 full_clean()을 호출함.
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
 
 
 class Attention(models.Model):

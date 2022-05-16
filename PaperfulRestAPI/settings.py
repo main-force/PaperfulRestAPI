@@ -146,7 +146,8 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ],
     'DATETIME_FORMAT': "%Y.%m.%dT%H:%M:%S",
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination'
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'EXCEPTION_HANDLER': 'PaperfulRestAPI.config.exceptions.django_error_handler'
 }
 
 APPEND_SLASH = False
