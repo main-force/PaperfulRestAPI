@@ -21,13 +21,14 @@ from django.urls import reverse
 from comment.models import Comment
 
 
-class UserProfileListAPIView(APIView):
+class UserProfileListAPIView(APIView, UserProfileLimitOffsetPagination):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         user_profile_list = UserProfile.objects.filter(user=request.user)
-        serializer = UserProfileDetailSerializer(user_profile_list, many=True)
-        return Response(serializer.data)
+        result = self.paginate_queryset(user_profile_list, request, view=self)
+        serializer = UserProfileDetailSerializer(result, many=True)
+        return self.get_paginated_response(serializer.data)
 
     def post(self, request):
         serializer = BaseUserProfileSerializer(data=request.data)
