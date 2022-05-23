@@ -13,7 +13,7 @@ class UserProfile(models.Model):
     user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='profile')
     nickname = models.CharField(max_length=16, unique=True)
     intro = models.CharField(max_length=150, blank=True)
-    image = models.ImageField(null=True, blank=True, upload_to=_userprofile_image_directory_path, default='userprofiles/profile_image_default.jpeg')
+    image = models.ImageField(null=True, blank=True, upload_to=_userprofile_image_directory_path, default='userprofiles/profile_image_default.png')
     subscribers = models.ManyToManyField('self', through='Subscribe', symmetrical=False, blank=True, related_name='subscriptions')
     bookmarks = models.ManyToManyField('post.Post', through='Bookmark', blank=True,
                                        related_name='bookmark_user_profiles')
