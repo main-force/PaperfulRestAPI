@@ -5,6 +5,7 @@ app_name = 'userprofile'
 
 urlpatterns = [
     path('', views.UserProfileListAPIView.as_view(), name='all'),
+    path('/validate/nickname', views.NicknameValidateAPIView.as_view(), name='nickname-validate'),
     path('/<int:pk>', views.UserProfileDetailAPIView.as_view(), name='detail'),
     path('/<int:pk>/posts', views.UserProfilePostListAPIView.as_view(), name='posts'),
 

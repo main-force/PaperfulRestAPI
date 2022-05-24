@@ -44,6 +44,32 @@ class UserProfileListAPIView(APIView, UserProfileLimitOffsetPagination):
         return Response(serializer.errors, status=400)
 
 
+class NicknameValidateAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        nickname = request.POST.get('nickname', None)
+        if nickname:
+            # TODO 언젠간 validation 추가해야함.
+            form = True
+            if not UserProfile.objects.filter(nickname=nickname).exists():
+                unique = True
+            else:
+                unique = False
+
+            is_valid = form and unique
+
+            data = {
+                'is_valid': is_valid,
+                'form': form,
+                'unique': unique,
+            }
+
+            return Response(data=data, status=200)
+        else:
+            return Response(data={'nickname': ['nickname은 필수 입력 항목입니다.']}, status=400)
+
+
 class UserProfileDetailAPIView(APIView):
     permission_classes = [IsOwnerOrReadOnly]
 
@@ -443,7 +469,6 @@ class UserProfileAttentionCommentDetailAPIView(APIView):
             return user_profile
         except ObjectDoesNotExist:
             return None
-
 
     def get(self, request, user_profile_pk, comment_pk):
         user_profile = self.get_user_profile(user_profile_pk)
