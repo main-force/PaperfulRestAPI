@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from account.views import Signup, obtain_auth_token, Logout
+from account.views import Signup, obtain_auth_token, Logout, EmailValidate
 from django.conf.urls.static import static
 from django.conf import settings
 
@@ -23,6 +23,7 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('signup', Signup.as_view(), name='signup'),
+    path('signup/validate/email', EmailValidate.as_view(), name='signup-email-validate'),
     path('auth', obtain_auth_token, name='obtain-auth-token'),
     path('posts', include('post.urls')),
     path('logout', Logout.as_view(), name='logout'),

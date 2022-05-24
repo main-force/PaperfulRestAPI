@@ -1,6 +1,9 @@
+from django.core.validators import EmailValidator
+from django.core.exceptions import ValidationError
+from PaperfulRestAPI.settings import AUTH_USER_MODEL
 from django.http import JsonResponse
 from django.shortcuts import render
-
+from account.models import User
 # Create your views here.
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -24,6 +27,37 @@ class Signup(APIView):
         serializer.save()
 
         return Response(status=201)
+
+
+class EmailValidate(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        email = request.POST.get('email', None)
+        if email:
+            email_validator = EmailValidator()
+            try:
+                email_validator(email)
+                form = True
+            except ValidationError:
+                form = False
+
+            if not User.objects.filter(email=email).exists():
+                unique = True
+            else:
+                unique = False
+
+            is_valid = form and unique
+
+            data = {
+                'is_valid': is_valid,
+                'form': form,
+                'unique': unique,
+            }
+
+            return Response(data=data, status=200)
+        else:
+            return Response(data={'email': ['email은 필수 입력 항목입니다.']}, status=400)
 
 
 class ObtainAuthToken(APIView):
