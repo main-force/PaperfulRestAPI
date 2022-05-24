@@ -37,6 +37,7 @@ class UserProfileListAPIView(APIView, UserProfileLimitOffsetPagination):
             instance = serializer.save(user=request.user)
             instance_url = reverse('userprofile:detail', args=(instance.id,))
             data = {
+                'id': instance.id,
                 'url': f'{host_domain}{instance_url}'
             }
             return Response(data, status=201)
