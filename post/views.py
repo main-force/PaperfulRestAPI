@@ -1,31 +1,31 @@
 from django.core.exceptions import ObjectDoesNotExist
-from hitcount.models import HitCount
 from hitcount.views import HitCountMixin
 
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from PaperfulRestAPI.config.domain import host_domain
-from PaperfulRestAPI.config.permissions import IsOwnerOrReadOnly, AllowAny, IsOwnerOnly
-from PaperfulRestAPI.tools.set_field import set_user_profile_to_request, set_post_to_request
+from PaperfulRestAPI.config.permissions import IsOwnerOrReadOnly, AllowAny
+from PaperfulRestAPI.tools.getters import get_post_object
 from comment.paginations import CommentLimitOffsetPagination
-from comment.serializers import ParentCommentSerializer, BaseCommentSerializer
-from comment.views import _get_post_object
+from comment.serializers import ParentCommentSerializer
 from post.models import Post
 from post.serializers import PostListSerializer, PostDetailSerializer, BasePostSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from post.paginations import PostLimitOffsetPagination
 from django.urls import reverse
+from django.db.models import Q
 
-from userprofile.models import UserProfile
 
 
 class PostListAPIView(APIView, PostLimitOffsetPagination):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        post_list = Post.objects.filter(status='O').order_by('-create_at')
+        search_query = request.GET.get('search_query', None)
+        if search_query:
+            post_list = Post.objects.filter(Q(status='O') & (Q(title__contains=search_query) | Q(content__contains=search_query) | Q(writer__nickname__contains=search_query))).order_by('-create_at')
+        else:
+            post_list = Post.objects.filter(status='O').order_by('-create_at')
 
         result = self.paginate_queryset(post_list, request, view=self)
         serializer = PostListSerializer(result, many=True)
@@ -47,7 +47,7 @@ class PostDetailAPIView(APIView):
         post = self.get_object(pk)
         if post:
             hit_count = post.hit_count
-            hit_count_response = HitCountMixin.hit_count(request, hit_count)
+            HitCountMixin.hit_count(request, hit_count)
             serializer = PostDetailSerializer(post)
             return Response(serializer.data)
         else:
@@ -103,7 +103,7 @@ class PostCommentListAPIView(APIView, CommentLimitOffsetPagination):
         :param pk: post's id
         :return: pk를 가진 post의 댓글들
         """
-        post = _get_post_object(pk)
+        post = get_post_object(pk)
         if post:
             comment_list = post.comment_list.filter(status='O', parent_comment__isnull=True).order_by('-create_at')
             result = self.paginate_queryset(comment_list, request, view=self)
