@@ -38,7 +38,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'hitcount',
-    'corsheaders'
+    'corsheaders',
+    'phonenumber_field',
+    'drf_spectacular',
 ]
 
 # 커스텀 app
@@ -47,6 +49,9 @@ INSTALLED_APPS += [
     'account.apps.AccountConfig',
     'userprofile.apps.UserprofileConfig',
     'comment.apps.CommentConfig',
+    'signup.apps.SignupConfig',
+    'auth.apps.AuthConfig',
+    'report.apps.ReportConfig'
 ]
 
 MIDDLEWARE = [
@@ -149,10 +154,18 @@ REST_FRAMEWORK = {
     ],
     'DATETIME_FORMAT': "%Y.%m.%dT%H:%M:%S",
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'EXCEPTION_HANDLER': 'PaperfulRestAPI.config.exceptions.django_error_handler'
+    'EXCEPTION_HANDLER': 'PaperfulRestAPI.config.exceptions.django_error_handler',
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 APPEND_SLASH = False
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Paperful RESTAPI',
+    'DESCRIPTION': 'Paperful 앱을 위한 RESTAPI 도큐먼트입니다.',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+}
