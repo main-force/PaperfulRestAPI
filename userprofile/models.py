@@ -13,7 +13,7 @@ class UserProfile(models.Model):
     user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='profile')
     nickname = models.CharField(max_length=16, unique=True)
     intro = models.CharField(max_length=150, blank=True)
-    image = models.ImageField(null=True, blank=True, upload_to=_userprofile_image_directory_path, default='userprofiles/profile_image_default.png')
+    image = models.ImageField(upload_to=_userprofile_image_directory_path, default='userprofiles/profile_image_default.png')
     subscribers = models.ManyToManyField('self', through='Subscribe', symmetrical=False, blank=True, related_name='subscriptions')
     bookmarks = models.ManyToManyField('post.Post', through='Bookmark', blank=True,
                                        related_name='bookmark_user_profiles')
@@ -29,11 +29,12 @@ class UserProfile(models.Model):
     def save(self, *args, **kwargs):
         # id 값을 userprofiles 저장하는 순간 알기 위함
         # 이미지 저장할 때 씀.
-        if self.id is None:
-            temp_image = self.image
-            self.image = None
-            super().save(*args, **kwargs)
-            self.image = temp_image
+        if self.image:
+            if self.id is None:
+                temp_image = self.image
+                self.image = None
+                super().save(*args, **kwargs)
+                self.image = temp_image
         super().save(*args, **kwargs)
 
 
