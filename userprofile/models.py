@@ -3,7 +3,7 @@ from account.models import User
 
 
 def _userprofile_image_directory_path(instance, filename):
-    return 'userprofiles/{}/image/{}'.format(instance.id, filename)
+    return 'user/{}/userprofiles/{}/image/{}'.format(instance.user.id, instance.nickname, filename)
 
 
 class UserProfile(models.Model):
@@ -26,16 +26,16 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.nickname
 
-    def save(self, *args, **kwargs):
-        # id 값을 userprofiles 저장하는 순간 알기 위함
-        # 이미지 저장할 때 씀.
-        if self.image:
-            if self.id is None:
-                temp_image = self.image
-                self.image = None
-                super().save(*args, **kwargs)
-                self.image = temp_image
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     # id 값을 userprofiles 저장하는 순간 알기 위함
+    #     # 이미지 저장할 때 씀.
+    #     if self.image:
+    #         if self.id is None:
+    #             temp_image = self.image
+    #             self.image = None
+    #             super().save(*args, **kwargs)
+    #             self.image = temp_image
+    #     super().save(*args, **kwargs)
 
 
 class Subscribe(models.Model):
