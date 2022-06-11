@@ -3,7 +3,7 @@ from account.models import User
 
 
 def _userprofile_image_directory_path(instance, filename):
-    return 'userprofiles/{}/image/{}'.format(instance.name, filename)
+    return 'userprofiles/{}/image/{}'.format(instance.id, filename)
 
 
 class UserProfile(models.Model):
