@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework.permissions import BasePermission, SAFE_METHODS
+from rest_framework.authentication import TokenAuthentication, BaseAuthentication
 
 
 class AllowAny(BasePermission):

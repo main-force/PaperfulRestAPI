@@ -15,19 +15,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from account.views import Signup, obtain_auth_token, Logout, EmailValidate
+from account.views import Logout
 from django.conf.urls.static import static
 from django.conf import settings
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('signup', Signup.as_view(), name='signup'),
-    path('signup/validate/email', EmailValidate.as_view(), name='signup-email-validate'),
-    path('auth', obtain_auth_token, name='obtain-auth-token'),
+    path('signup', include('signup.urls')),
+    path('auth', include('auth.urls')),
     path('posts', include('post.urls')),
     path('logout', Logout.as_view(), name='logout'),
     path('userprofiles', include('userprofile.urls')),
     path('api-auth', include('rest_framework.urls', namespace='rest_framework')),
     path('comments', include('comment.urls')),
+    path('docs', include('docs.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

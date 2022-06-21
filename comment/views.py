@@ -9,29 +9,11 @@ from rest_framework.views import APIView
 
 from PaperfulRestAPI.config.domain import host_domain
 from PaperfulRestAPI.config.permissions import IsOwnerOrReadOnly
-from PaperfulRestAPI.tools.set_field import set_user_profile_to_request, set_post_to_request, \
-    set_parent_comment_to_request
+from PaperfulRestAPI.tools.getters import get_parent_comment_object
+
 from comment.models import Comment
 from comment.serializers import BaseCommentSerializer, ParentCommentSerializer, ChildCommentSerializer
 from comment.paginations import CommentLimitOffsetPagination
-from post.models import Post
-
-
-def _get_post_object(pk):
-    try:
-        post = Post.objects.get(id=pk)
-        return post
-    except ObjectDoesNotExist:
-        return None
-
-
-def _get_parent_comment_object(pk):
-    try:
-        comment = Comment.objects.filter(parent_comment__isnull=True).get(id=pk)
-        return comment
-    except ObjectDoesNotExist:
-        return None
-
 
 class ChildCommentListAPIView(APIView, CommentLimitOffsetPagination):
     """
@@ -46,7 +28,7 @@ class ChildCommentListAPIView(APIView, CommentLimitOffsetPagination):
         :param pk: comment's id
         :return: pk를 가진 comment의 댓글들
         """
-        comment = _get_parent_comment_object(pk)
+        comment = get_parent_comment_object(pk)
         if comment:
             comment_list = comment.child_comment_list.filter(status='O').order_by('create_at')
             result = self.paginate_queryset(comment_list, request, view=self)

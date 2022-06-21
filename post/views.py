@@ -1,10 +1,17 @@
+from django.contrib.auth.decorators import permission_required, login_required
 from django.core.exceptions import ObjectDoesNotExist
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema_view, extend_schema, OpenApiParameter, OpenApiExample
 from hitcount.views import HitCountMixin
-
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.generics import ListAPIView
+from rest_framework.permissions import IsAuthenticated
 
 from PaperfulRestAPI.config.domain import host_domain
 from PaperfulRestAPI.config.permissions import IsOwnerOrReadOnly, AllowAny
+
 from PaperfulRestAPI.tools.getters import get_post_object
+from auth.openapi.parameters import USER_TOKEN_PARAMETER
 from comment.paginations import CommentLimitOffsetPagination
 from comment.serializers import ParentCommentSerializer
 from post.models import Post
@@ -14,24 +21,57 @@ from rest_framework.response import Response
 from post.paginations import PostLimitOffsetPagination
 from django.urls import reverse
 from django.db.models import Q
+from drf_spectacular.extensions import OpenApiAuthenticationExtension
 
 
-
-class PostListAPIView(APIView, PostLimitOffsetPagination):
+@extend_schema_view(
+    get=extend_schema(
+        tags=['글'],
+        summary='전체 글 목록 조회',
+        description='글 목록 조회 시, 글의 status값이 “O”인 글만 제공합니다.',
+        parameters=[
+            OpenApiParameter(name='search_query', description='검색어(제목, 내용, 닉네임 통합 검색)', required=False, type=str),
+        ],
+        auth=[]
+    )
+)
+class PostListAPIView(ListAPIView):
+    pagination_class = PostLimitOffsetPagination
+    queryset = Post.objects.filter(status='O').order_by('-create_at')
+    serializer_class = PostListSerializer
     permission_classes = [AllowAny]
 
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
         search_query = request.GET.get('search_query', None)
         if search_query:
-            post_list = Post.objects.filter(Q(status='O') & (Q(title__contains=search_query) | Q(content__contains=search_query) | Q(writer__nickname__contains=search_query))).order_by('-create_at')
+            post_list = self.get_queryset().filter((Q(title__contains=search_query) | Q(content__contains=search_query) | Q(writer__nickname__contains=search_query))).order_by('-create_at')
         else:
-            post_list = Post.objects.filter(status='O').order_by('-create_at')
-
-        result = self.paginate_queryset(post_list, request, view=self)
-        serializer = PostListSerializer(result, many=True)
+            post_list = self.get_queryset()
+        result = self.paginate_queryset(post_list)
+        serializer = self.get_serializer(result, many=True)
         return self.get_paginated_response(serializer.data)
 
 
+@extend_schema_view(
+    get=extend_schema(
+        tags=['글'],
+        summary='특정 글 조회',
+        description='status값이 "O"인 글만 제공합니다.',
+        responses=PostDetailSerializer,
+        auth=[]
+    ),
+    patch=extend_schema(
+        tags=['글'],
+        summary='특정 글 수정',
+        description='특정 글을 수정할 수 있습니다.',
+        request=BasePostSerializer,
+    ),
+    delete=extend_schema(
+        tags=['글'],
+        summary='특정 글 삭제',
+        description='특정 글을 삭제할 수 있습니다.',
+    ),
+)
 class PostDetailAPIView(APIView):
     permission_classes = [IsOwnerOrReadOnly]
 
