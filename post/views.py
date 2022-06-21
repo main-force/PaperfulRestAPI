@@ -65,6 +65,7 @@ class PostListAPIView(ListAPIView):
         summary='특정 글 수정',
         description='특정 글을 수정할 수 있습니다.',
         request=BasePostSerializer,
+        responses=PostDetailSerializer
     ),
     delete=extend_schema(
         tags=['글'],
@@ -102,11 +103,8 @@ class PostDetailAPIView(APIView):
             serializer = BasePostSerializer(post, data=request.data, partial=True)
             if serializer.is_valid():
                 instance = serializer.save()
-                instance_url = reverse('post:detail', args=(instance.id,))
-                data = {
-                    'url': f'{host_domain}{instance_url}'
-                }
-                return Response(data, status=200)
+                serializer = PostDetailSerializer(instance)
+                return Response(serializer.data, status=200)
             return Response(serializer.errors, status=400)
         else:
             data = {

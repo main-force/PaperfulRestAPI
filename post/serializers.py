@@ -166,6 +166,7 @@ class PostDetailSerializer(DynamicFieldsPostSerializer):
 
     class Meta:
         model = Post
+        depth = 1
         fields = [
             'id',
             'object_type',
