@@ -22,6 +22,8 @@ from post.paginations import PostLimitOffsetPagination
 from django.urls import reverse
 from django.db.models import Q
 from drf_spectacular.extensions import OpenApiAuthenticationExtension
+from comment.models import Comment
+from rest_framework.exceptions import ValidationError, NotFound
 
 
 @extend_schema_view(
@@ -71,6 +73,9 @@ class PostListAPIView(ListAPIView):
         tags=['글'],
         summary='특정 글 삭제',
         description='특정 글을 삭제할 수 있습니다.',
+        responses={
+            204: None
+        }
     ),
 )
 class PostDetailAPIView(APIView):
@@ -116,10 +121,7 @@ class PostDetailAPIView(APIView):
         post = self.get_object(pk)
         if post:
             post.delete()
-            data = {
-                'messages': '삭제 완료'
-            }
-            return Response(data=data, status=204)
+            return Response(status=204)
         else:
             data = {
                 'messages': '해당 글을 찾을 수 없습니다.'
@@ -127,28 +129,31 @@ class PostDetailAPIView(APIView):
             return Response(data=data, status=404)
 
 
-class PostCommentListAPIView(APIView, CommentLimitOffsetPagination):
-    """
-    post의 댓글에 대한 처리 view.
-    특정 post의 id값을 pk로 전달 받음.
-    permission_classes는 전달받은 writer가 user의 uesr_profile인지를 검증하기 위함임.
-    """
+@extend_schema_view(
+    get=extend_schema(
+        tags=['댓글'],
+        summary='특정 글의 댓글 목록 조회',
+        description='댓글 목록 조회 시, 댓글의 status값이 “O”인 글만 제공합니다.',
+        auth=[]
+    )
+)
+class PostCommentListAPIView(ListAPIView):
+    pagination_class = CommentLimitOffsetPagination
+    serializer_class = ParentCommentSerializer
     permission_classes = [AllowAny]
 
-    def get(self, request, pk):
-        """
-        :param request: client's http request.
-        :param pk: post's id
-        :return: pk를 가진 post의 댓글들
-        """
-        post = get_post_object(pk)
+    def get(self, request, *args, **kwargs):
+        comment_list = self.get_queryset()
+        result = self.paginate_queryset(comment_list)
+        serializer = self.get_serializer(result, many=True)
+        return self.get_paginated_response(serializer.data)
+
+    def get_queryset(self):
+        post = get_post_object(self.kwargs['pk'])
         if post:
-            comment_list = post.comment_list.filter(status='O', parent_comment__isnull=True).order_by('-create_at')
-            result = self.paginate_queryset(comment_list, request, view=self)
-            serializer = ParentCommentSerializer(result, many=True)
-            return self.get_paginated_response(serializer.data)
+            return post.comment_list.filter(status='O', parent_comment__isnull=True).order_by('-create_at')
         else:
-            data = {
-                'messages': '해당 글을 찾을 수 없습니다.'
-            }
-            return Response(data=data, status=404)
+            raise NotFound({
+                'messages': '존재하지 않는 글입니다.'
+            })
+

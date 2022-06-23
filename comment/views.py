@@ -1,51 +1,75 @@
 from django.core.exceptions import ObjectDoesNotExist
-from django.shortcuts import render
-from django.urls import reverse
+from drf_spectacular.utils import extend_schema_view, extend_schema
+from rest_framework.exceptions import NotFound
+from rest_framework.generics import ListAPIView
 
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
 from rest_framework.views import APIView
 
-from PaperfulRestAPI.config.domain import host_domain
 from PaperfulRestAPI.config.permissions import IsOwnerOrReadOnly
 from PaperfulRestAPI.tools.getters import get_parent_comment_object
 
 from comment.models import Comment
 from comment.serializers import BaseCommentSerializer, ParentCommentSerializer, ChildCommentSerializer
 from comment.paginations import CommentLimitOffsetPagination
+from PaperfulRestAPI.config.permissions import AllowAny
 
-class ChildCommentListAPIView(APIView, CommentLimitOffsetPagination):
-    """
-    대 댓글에 대한 처리 view.
-    특정 comment의 id값을 pk로 전달 받음.
-    """
-    permission_classes = [IsAuthenticatedOrReadOnly]
 
-    def get(self, request, pk):
-        """
-        :param request: client's http request.
-        :param pk: comment's id
-        :return: pk를 가진 comment의 댓글들
-        """
-        comment = get_parent_comment_object(pk)
-        if comment:
-            comment_list = comment.child_comment_list.filter(status='O').order_by('create_at')
-            result = self.paginate_queryset(comment_list, request, view=self)
-            serializer = ChildCommentSerializer(result, many=True)
-            return self.get_paginated_response(serializer.data)
+@extend_schema_view(
+    get=extend_schema(
+        tags=['댓글'],
+        summary='특정 댓글의 대댓글 목록 조회',
+        description='대댓글 목록 조회 시, 대댓글의 status값이 “O”인 글만 제공합니다.',
+        auth=[]
+    )
+)
+class ChildCommentListAPIView(ListAPIView):
+    pagination_class = CommentLimitOffsetPagination
+    serializer_class = ChildCommentSerializer
+    permission_classes = [AllowAny]
+
+    def get(self, request, *args, **kwargs):
+        comment_list = self.get_queryset()
+        result = self.paginate_queryset(comment_list)
+        serializer = self.get_serializer(result, many=True)
+        return self.get_paginated_response(serializer.data)
+
+    def get_queryset(self):
+        parent_comment = get_parent_comment_object(self.kwargs['pk'])
+        if parent_comment:
+            return parent_comment.child_comment_list.filter(status='O').order_by('create_at')
         else:
-            data = {
-                'messages': '해당 댓글을 찾을 수 없습니다.'
-            }
-            return Response(data=data, status=404)
+            raise NotFound({
+                'messages': '존재하지 않는 댓글입니다.'
+            })
 
 
+@extend_schema_view(
+    get=extend_schema(
+        tags=['댓글'],
+        summary='특정 댓글 조회',
+        description='status값이 "O"인 댓글만 제공합니다. 댓글, 대댓글 모두 조회 가능합니다.',
+        responses=ParentCommentSerializer,
+        auth=[]
+    ),
+    patch=extend_schema(
+        tags=['댓글'],
+        summary='특정 댓글 수정',
+        description='특정 댓글을 수정할 수 있습니다.',
+        request=BaseCommentSerializer,
+        responses=ParentCommentSerializer
+    ),
+    delete=extend_schema(
+        tags=['댓글'],
+        summary='특정 댓글 삭제',
+        description='특정 댓글을 삭제할 수 있습니다.',
+        responses={
+            204: None
+        }
+    ),
+)
 class CommentDetailAPIView(APIView):
-    """
-    댓글에 대한 처리 view.
-    특정 comment의 id값을 pk로 전달 받음.
-    """
     permission_classes = [IsOwnerOrReadOnly]
 
     def get_object(self, pk):
@@ -61,17 +85,10 @@ class CommentDetailAPIView(APIView):
             return None
 
     def get(self, request, pk):
-        """
-        :param request: client's http request.
-        :param pk: comment's pk
-        :return: pk를 가진 댓글
-        """
         comment = self.get_object(pk)
         if comment:
-            if comment.is_parent:
-                serializer = ParentCommentSerializer(comment)
-            else:
-                serializer = ChildCommentSerializer(comment)
+            # 많은 정보를 보여주기 위해서 댓글, 대댓글 모두 Parent Comment 로 serialize 함
+            serializer = ParentCommentSerializer(comment)
             return Response(serializer.data)
         else:
             data = {
@@ -85,11 +102,8 @@ class CommentDetailAPIView(APIView):
             serializer = BaseCommentSerializer(comment, data=request.data, partial=True)
             if serializer.is_valid():
                 instance = serializer.save()
-                instance_url = reverse('comment:detail', args=(instance.id,))
-                data = {
-                    'url': f'{host_domain}{instance_url}'
-                }
-                return Response(data, status=200)
+                serializer = ParentCommentSerializer(instance)
+                return Response(serializer.data, status=200)
             return Response(serializer.errors, status=400)
         else:
             data = {
@@ -101,10 +115,7 @@ class CommentDetailAPIView(APIView):
         comment = self.get_object(pk)
         if comment:
             comment.delete()
-            data = {
-                'messages': '삭제 완료'
-            }
-            return Response(data=data, status=204)
+            return Response(status=204)
         else:
             data = {
                 'messages': '해당 댓글을 찾을 수 없습니다.'

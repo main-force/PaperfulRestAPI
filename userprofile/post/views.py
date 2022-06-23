@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from PaperfulRestAPI.config.domain import host_domain
 from PaperfulRestAPI.config.permissions import IsOwnerOrReadOnly, IsOwnerOnly
 from comment.paginations import CommentLimitOffsetPagination
-from comment.serializers import BaseCommentSerializer
+from comment.serializers import BaseCommentSerializer, ParentCommentSerializer
 from post.models import Post
 from post.paginations import PostLimitOffsetPagination
 from post.serializers import PostListSerializer, BasePostSerializer, PostDetailSerializer
@@ -19,13 +19,13 @@ from PaperfulRestAPI.tools.getters import get_post_object
 
 @extend_schema_view(
     get=extend_schema(
-        tags=[_('글')],
+        tags=['글'],
         summary=_('특정 유저 프로필의 글 목록 조회'),
         description=_('글 목록 조회 시, 글의 status값이 “O”인 글만 제공합니다.'),
         auth=[],
     ),
     post=extend_schema(
-        tags=[_('글')],
+        tags=['글'],
         summary=_('글 작성'),
         description=_('특정 유저프로필의 글을 작성합니다. 유저가 소유한 유저 프로필로만 작성 가능합니다. weather, diary_day 필드는 "diary" 오브젝트만 가질 수 있습니다.'),
         request=BasePostSerializer,
@@ -83,6 +83,17 @@ class UserProfilePostListAPIView(ListAPIView):
             return Response(data=data, status=404)
 
 
+@extend_schema_view(
+    post=extend_schema(
+        tags=['댓글'],
+        summary=_('댓글 작성'),
+        description=_('특정 유저프로필의 댓글을 작성합니다. 유저가 소유한 유저 프로필로만 작성 가능합니다.'),
+        request=BaseCommentSerializer,
+        responses={
+            201: ParentCommentSerializer
+        }
+    )
+)
 class UserProfileCommentListAPIView(APIView, CommentLimitOffsetPagination):
     permission_classes = [IsOwnerOnly]
 
@@ -103,11 +114,8 @@ class UserProfileCommentListAPIView(APIView, CommentLimitOffsetPagination):
 
                 if serializer.is_valid():
                     instance = serializer.save(post=post, writer=user_profile)
-                    instance_url = reverse('comment:detail', args=(instance.id,))
-                    data = {
-                        'url': f'{host_domain}{instance_url}'
-                    }
-                    return Response(data, status=201)
+                    serializer = ParentCommentSerializer(instance)
+                    return Response(serializer.data, status=201)
                 return Response(serializer.errors, status=400)
             else:
                 data = {

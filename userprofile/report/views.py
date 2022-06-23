@@ -1,30 +1,30 @@
 from django.core.exceptions import ObjectDoesNotExist
-from django.shortcuts import render
+from drf_spectacular.utils import extend_schema_view, extend_schema
 
-# Create your views here.
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import ValidationError
 
-from PaperfulRestAPI.config.domain import host_domain
-from PaperfulRestAPI.config.permissions import IsOwnerOrReadOnly, IsOwnerOnly
+from PaperfulRestAPI.config.permissions import IsOwnerOnly
 from PaperfulRestAPI.tools.getters import get_user_profile_object, get_post_object, get_report_post_object, \
     get_comment_object, get_report_user_profile_object, get_report_comment_object
-from comment.paginations import CommentLimitOffsetPagination
-from comment.serializers import BaseCommentSerializer
-from post.models import Post
-from post.paginations import PostLimitOffsetPagination
-from post.serializers import PostListSerializer, BasePostSerializer
-from report.models import ReportUserProfile, ReportPost, ReportComment
+
 from report.serializers import BaseReportUserProfileSerializer, BaseReportPostSerializer, BaseReportCommentSerializer
-from userprofile.models import UserProfile, Subscribe, Bookmark
-from userprofile.paginations import UserProfileLimitOffsetPagination
-from userprofile.serializers import UserProfileDetailSerializer, BaseUserProfileSerializer
-from django.urls import reverse
-from comment.models import Comment
+from userprofile.models import UserProfile
+from userprofile.report.serializers import ReportUserProfileIdRequestSerializer, ReportPostIdRequestSerializer, \
+    ReportCommentIdRequestSerializer
+from django.utils.translation import gettext as _
 
-
+@extend_schema_view(
+    post=extend_schema(
+        tags=['신고'],
+        summary=_('특정 유저 프로필 신고'),
+        description=_('특정 유저 프로필을 신고할 수 있습니다.'),
+        request=ReportUserProfileIdRequestSerializer,
+        responses={
+            204: None
+        }
+    )
+)
 class UserProfileReportUserProfileAPIView(APIView):
     permission_classes = [IsOwnerOnly]
 
@@ -39,8 +39,9 @@ class UserProfileReportUserProfileAPIView(APIView):
     def post(self, request, user_profile_pk):
         user_profile = self.get_user_profile(user_profile_pk)
         if user_profile:
-            if 'user_profile_id' in request.POST:
-                target_user_profile_pk = request.POST.get('user_profile_id')
+            serializer = ReportUserProfileIdRequestSerializer(data=request.data)
+            if serializer.is_valid():
+                target_user_profile_pk = serializer.validated_data['user_profile_id']
                 target_user_profile = get_user_profile_object(target_user_profile_pk)
                 if target_user_profile:
                     if get_report_user_profile_object(user_profile, target_user_profile):
@@ -50,25 +51,28 @@ class UserProfileReportUserProfileAPIView(APIView):
                         return Response(data=data, status=400)
                     else:
                         data = {
-                            'reporter': user_profile,
-                            'reportee': target_user_profile
+                            'reporter': user_profile.id,
+                            'reportee': target_user_profile.id
                         }
                         serializer = BaseReportUserProfileSerializer(data=data)
                         if serializer.is_valid():
                             serializer.save()
                             return Response(status=204)
                         else:
-                            return Response(serializer.errors, status=400)
+                            errors = serializer.errors
+                            details = 'Paperful 고객센터에 문의하여 주십시오.'
+                            data = {
+                                'errors': errors,
+                                'details': details,
+                            }
+                            return Response(data=data, status=500)
                 else:
                     data = {
                         'messages': '신고 하고자하는 유저프로필을 찾을 수 없습니다.'
                     }
                     return Response(data=data, status=404)
             else:
-                data = {
-                    'user_profile_id': {'messages': '이 필드는 필수 입력 필드입니다.'}
-                }
-                return Response(data=data, status=400)
+                return Response(serializer.errors, status=400)
         else:
             data = {
                 'messages': '해당 프로필을 찾을 수 없습니다.'
@@ -76,6 +80,17 @@ class UserProfileReportUserProfileAPIView(APIView):
             return Response(data=data, status=404)
 
 
+@extend_schema_view(
+    post=extend_schema(
+        tags=['신고'],
+        summary=_('특정 글 신고'),
+        description=_('특정 글을 신고할 수 있습니다.'),
+        request=ReportPostIdRequestSerializer,
+        responses={
+            204: None
+        }
+    )
+)
 class UserProfileReportPostAPIView(APIView):
     permission_classes = [IsOwnerOnly]
 
@@ -90,8 +105,9 @@ class UserProfileReportPostAPIView(APIView):
     def post(self, request, user_profile_pk):
         user_profile = self.get_user_profile(user_profile_pk)
         if user_profile:
-            if 'post_id' in request.POST:
-                post_pk = request.POST.get('post_id')
+            serializer = ReportPostIdRequestSerializer(data=request.data)
+            if serializer.is_valid():
+                post_pk = serializer.validated_data['post_id']
                 post = get_post_object(post_pk)
                 if post:
                     if get_report_post_object(user_profile, post):
@@ -101,25 +117,28 @@ class UserProfileReportPostAPIView(APIView):
                         return Response(data=data, status=400)
                     else:
                         data = {
-                            'reporter': user_profile,
-                            'post': post
+                            'reporter': user_profile.id,
+                            'post': post.id
                         }
                         serializer = BaseReportPostSerializer(data=data)
                         if serializer.is_valid():
                             serializer.save()
                             return Response(status=204)
                         else:
-                            return Response(serializer.errors, status=400)
+                            errors = serializer.errors
+                            details = 'Paperful 고객센터에 문의하여 주십시오.'
+                            data = {
+                                'errors': errors,
+                                'details': details,
+                            }
+                            return Response(data=data, status=500)
                 else:
                     data = {
                         'messages': '신고 하고자하는 글을 찾을 수 없습니다.'
                     }
                     return Response(data=data, status=404)
             else:
-                data = {
-                    'post_id': {'messages': '이 필드는 필수 입력 필드입니다.'}
-                }
-                return Response(data=data, status=400)
+                return Response(serializer.errors, status=400)
         else:
             data = {
                 'messages': '해당 프로필을 찾을 수 없습니다.'
@@ -127,6 +146,17 @@ class UserProfileReportPostAPIView(APIView):
             return Response(data=data, status=404)
 
 
+@extend_schema_view(
+    post=extend_schema(
+        tags=['신고'],
+        summary=_('특정 댓글 신고'),
+        description=_('특정 댓글을 신고할 수 있습니다.'),
+        request=ReportCommentIdRequestSerializer,
+        responses={
+            204: None
+        }
+    )
+)
 class UserProfileReportCommentAPIView(APIView):
     permission_classes = [IsOwnerOnly]
 
@@ -141,8 +171,9 @@ class UserProfileReportCommentAPIView(APIView):
     def post(self, request, user_profile_pk):
         user_profile = self.get_user_profile(user_profile_pk)
         if user_profile:
-            if 'comment_id' in request.POST:
-                comment_pk = request.POST.get('comment_id')
+            serializer = ReportCommentIdRequestSerializer(data=request.data)
+            if serializer.is_valid():
+                comment_pk = serializer.validated_data['comment_id']
                 comment = get_comment_object(comment_pk)
                 if comment:
                     if get_report_comment_object(user_profile, comment):
@@ -152,25 +183,28 @@ class UserProfileReportCommentAPIView(APIView):
                         return Response(data=data, status=400)
                     else:
                         data = {
-                            'reporter': user_profile,
-                            'comment': comment
+                            'reporter': user_profile.id,
+                            'comment': comment.id
                         }
                         serializer = BaseReportCommentSerializer(data=data)
                         if serializer.is_valid():
                             serializer.save()
                             return Response(status=204)
                         else:
-                            return Response(serializer.errors, status=400)
+                            errors = serializer.errors
+                            details = 'Paperful 고객센터에 문의하여 주십시오.'
+                            data = {
+                                'errors': errors,
+                                'details': details,
+                            }
+                            return Response(data=data, status=500)
                 else:
                     data = {
                         'messages': '신고 하고자하는 댓글을 찾을 수 없습니다.'
                     }
                     return Response(data=data, status=404)
             else:
-                data = {
-                    'comment_id': {'messages': '이 필드는 필수 입력 필드입니다.'}
-                }
-                return Response(data=data, status=400)
+                return Response(serializer.errors, status=400)
         else:
             data = {
                 'messages': '해당 프로필을 찾을 수 없습니다.'

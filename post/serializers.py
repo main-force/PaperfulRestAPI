@@ -66,8 +66,7 @@ class BasePostSerializer(serializers.ModelSerializer):
         }
 
 
-@extend_schema_serializer(
-)
+@extend_schema_serializer()
 class PostListSerializer(serializers.ModelSerializer):
     thumbnail = serializers.SerializerMethodField(help_text=_('해당 글의 섬네일 이미지'))
     intro = serializers.SerializerMethodField(help_text=_('글의 인트로'))
