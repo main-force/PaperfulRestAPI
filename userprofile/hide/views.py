@@ -131,7 +131,7 @@ class UserProfileHideUserProfileDetailAPIView(APIView):
             if target_user_profile:
                 if get_user_profile_in_target_user_profile_hide_user_profiles(user_profile, target_user_profile_pk):
                     serializer = HideCheckResponseSerializer(
-                        data = {
+                        data={
                             'is_hide': True
                         }
                     )

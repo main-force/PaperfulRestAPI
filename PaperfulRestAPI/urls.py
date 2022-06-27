@@ -24,10 +24,11 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('signup', include('signup.urls')),
     path('auth', include('auth.urls')),
-    path('posts', include('post.urls')),
     path('logout', Logout.as_view(), name='logout'),
+    path('posts', include('post.urls')),
     path('userprofiles', include('userprofile.urls')),
-    path('api-auth', include('rest_framework.urls', namespace='rest_framework')),
     path('comments', include('comment.urls')),
+    path('postcollection', include('postcollection.urls')),
+    path('api-auth', include('rest_framework.urls', namespace='rest_framework')),
     path('docs', include('docs.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

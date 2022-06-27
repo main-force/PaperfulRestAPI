@@ -15,4 +15,5 @@ urlpatterns = [
     path('/<int:user_profile_pk>/subscriptions', include('userprofile.subscription.urls')),
     path('/<int:user_profile_pk>/hides', include('userprofile.hide.urls')),
     path('/<int:user_profile_pk>/reports', include('userprofile.report.urls')),
+    path('/<int:user_profile_pk>/postcollections', include('userprofile.postcollection.urls')),
 ]

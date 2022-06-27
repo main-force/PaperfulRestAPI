@@ -37,6 +37,7 @@ POST_OBJECT_TYPE = (
     ('general', _('General object')),
     ('short_text', _('Short text object')),
     ('diary', _('Diary object')),
+    ('post_collection', _('Post Collection'))
 )
 
 only_fields = {
@@ -45,7 +46,7 @@ only_fields = {
 
 
 class Post(models.Model, HitCountMixin):
-    object_type = models.CharField(choices=POST_OBJECT_TYPE, max_length=10, help_text=_('글의 오브젝트 타입'))
+    object_type = models.CharField(choices=POST_OBJECT_TYPE, max_length=15, help_text=_('글의 오브젝트 타입'))
     tags = models.ManyToManyField(Tag, through='PostTag', blank=True, related_name='posts', help_text=_('글의 태그'))
     attention_user_profiles = models.ManyToManyField(UserProfile, through='Attention', blank=True, related_name='attention_posts', help_text=_('글을 주목하고 있는 유저 프로필 목록'))
     hit_count_generic = GenericRelation(
@@ -65,7 +66,7 @@ class Post(models.Model, HitCountMixin):
 
     status = models.CharField(default='T', max_length=1, choices=POST_STATUS, help_text=_('글의 상태'))
 
-    # diary field
+    # diary only field
     diary_day = models.TextField(blank=True, help_text=_('글을 쓴 날(추상적 개념; ex. 개발하기 싫은 날)'))
     weather = models.TextField(blank=True, help_text=_('글쓴 날의 날씨(추상적 개념; ex. 꿀꿀한 날씨)'))
 

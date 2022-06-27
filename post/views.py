@@ -110,7 +110,8 @@ class PostDetailAPIView(APIView):
                 instance = serializer.save()
                 serializer = PostDetailSerializer(instance)
                 return Response(serializer.data, status=200)
-            return Response(serializer.errors, status=400)
+            else:
+                return Response(serializer.errors, status=400)
         else:
             data = {
                 'messages': '해당 글을 찾을 수 없습니다.'

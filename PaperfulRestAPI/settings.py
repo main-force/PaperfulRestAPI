@@ -51,7 +51,8 @@ INSTALLED_APPS += [
     'comment.apps.CommentConfig',
     'signup.apps.SignupConfig',
     'auth.apps.AuthConfig',
-    'report.apps.ReportConfig'
+    'report.apps.ReportConfig',
+    'postcollection.apps.PostcollectionConfig'
 ]
 
 MIDDLEWARE = [
