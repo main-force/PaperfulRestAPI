@@ -6,7 +6,7 @@ from rest_framework.exceptions import ValidationError
 
 
 class EmailSerializer(serializers.Serializer):
-    email = serializers.CharField(max_length=255, help_text=_('회원 생성 가능 여부를 확인하기 위한 이메일'))
+    email = serializers.CharField(help_text=_('회원 생성 가능 여부를 확인하기 위한 이메일'))
 
     def validate(self, attrs):
         """
