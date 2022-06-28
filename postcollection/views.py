@@ -15,7 +15,7 @@ from post.serializers import PostListSerializer, BasePostSerializer, PostDetailS
 from postcollection.models import PostCollection, PostCollectionElement
 from postcollection.paginations import PostCollectionLimitOffsetPagination
 from postcollection.serializers import BasePostCollectionSerializer, PostCollectionDetailSerializer, \
-    PostCollectionPostIdRequestSerializer
+    PostCollectionPostIdRequestSerializer, PostCollectionElementSerializer
 from userprofile.models import UserProfile
 
 from django.urls import reverse
@@ -99,22 +99,22 @@ class PostCollectionDetailAPIView(APIView):
 @extend_schema_view(
     get=extend_schema(
         tags=['글 모음집'],
-        summary=_('특정 글 모음집 내 글 목록 조회'),
-        description=_('글 목록 조회 시, 글의 status값이 “O”인 글만 제공합니다.'),
+        summary=_('특정 글 모음집 내 요소 목록 조회'),
+        description=_('요소 조회 시, 글의 status값이 “O”인 글만 제공합니다.'),
     ),
     post=extend_schema(
         tags=['글 모음집'],
-        summary=_('특정 글 모음집에 글 추가하기'),
-        description=_('특정 글 모음집에 글을 추가 할 수 있습니다. 같은 글을 중복하여 추가할 수 있습니다.'),
+        summary=_('특정 글 모음집에 글 요소 추가하기'),
+        description=_('특정 글 모음집에 글 요소를 추가 할 수 있습니다. 같은 글을 중복하여 추가할 수 있습니다.'),
         request=PostCollectionPostIdRequestSerializer,
         responses={
             204: None
         }
     )
 )
-class PostCollectionPostListAPIView(ListAPIView):
+class PostCollectionElementListAPIView(ListAPIView):
     pagination_class = PostLimitOffsetPagination
-    serializer_class = PostListSerializer
+    serializer_class = PostCollectionElementSerializer
     permission_classes = [IsOwnerOnly]
 
     def get_object(self):
@@ -128,7 +128,7 @@ class PostCollectionPostListAPIView(ListAPIView):
     def get_queryset(self):
         post_collection = self.get_object()
         if post_collection:
-            return post_collection.posts.filter(status='O')
+            return post_collection.post_collection_elements_by_post_collection.filter(post__status='O')
         else:
             raise NotFound({
                 'messages': '해당 글 모음집을 찾을 수 없습니다.'
@@ -163,3 +163,49 @@ class PostCollectionPostListAPIView(ListAPIView):
             })
 
 
+@extend_schema_view(
+    delete=extend_schema(
+        tags=['글 모음집'],
+        summary=_('특정 글 모음집 내 요소 제거'),
+        description=_('특정 글 모음집에 요소를 제거 할 수 있습니다.'),
+        request=PostCollectionPostIdRequestSerializer,
+        responses={
+            204: None
+        }
+    )
+)
+class PostCollectionElementDetailAPIView(APIView):
+    permission_classes = [IsOwnerOnly]
+
+    def get_object(self, pk):
+        try:
+            post_collection = PostCollection.objects.get(id=pk)
+            self.check_object_permissions(self.request, post_collection)
+            return post_collection
+        except ObjectDoesNotExist:
+            return None
+
+    def get_element(self, post_collection, pk):
+        try:
+            element = post_collection.post_collection_elements_by_post_collection.get(id=pk)
+            return element
+        except ObjectDoesNotExist:
+            return None
+
+    def delete(self, request, post_collection_pk, element_pk):
+        post_collection = self.get_object(post_collection_pk)
+        if post_collection:
+            element = self.get_element(post_collection, element_pk)
+            if element:
+                element.delete()
+                return Response(status=204)
+            else:
+                data = {
+                    'messages': '해당 요소를 모음집에서 찾을 수 없습니다.'
+                }
+                return Response(data=data, status=404)
+        else:
+            data = {
+                'messages': '해당 글 모음집을 찾을 수 없습니다.'
+            }
+            return Response(data=data, status=404)

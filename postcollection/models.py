@@ -18,15 +18,15 @@ class PostCollection(models.Model):
 
 
 def _get_index(post_collection_instance):
-    latest = post_collection_instance.post_collections_by_post_collection.aggregate(models.Max('index'))
+    latest = post_collection_instance.post_collection_elements_by_post_collection.aggregate(models.Max('index'))
     latest_index = latest['index__max']
 
     return latest_index + 1 if latest_index is not None else 0
 
 
 class PostCollectionElement(models.Model):
-    post_collection = models.ForeignKey(PostCollection, on_delete=models.CASCADE, related_name='post_collections_by_post_collection', help_text=_('글 모음집'))
-    post = models.ForeignKey('post.Post', on_delete=models.CASCADE, related_name='post_collections_by_post', help_text=_('글 모음집에 있는 글'))
+    post_collection = models.ForeignKey(PostCollection, on_delete=models.CASCADE, related_name='post_collection_elements_by_post_collection', help_text=_('글 모음집'))
+    post = models.ForeignKey('post.Post', on_delete=models.CASCADE, related_name='post_collection_elements_by_post', help_text=_('글 모음집에 있는 글'))
     create_at = models.DateTimeField(auto_now_add=True, help_text=_('모음집에 추가한 날짜 및 시간'))
     update_at = models.DateTimeField(auto_now=True)
     # 반드시 serializer 내에서 read_only field로 바꾸어야합니다.
