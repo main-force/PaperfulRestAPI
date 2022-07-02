@@ -25,7 +25,7 @@ class BaseUserProfileSerializer(serializers.ModelSerializer):
         ]
 
     def validate_image(self, value):
-        processed_value = resized_image_value(value, 160, 160)
+        processed_value = resized_image_value(value, 320, 320)
         return processed_value
 
 

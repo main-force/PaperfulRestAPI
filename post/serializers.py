@@ -67,7 +67,7 @@ class BasePostSerializer(serializers.ModelSerializer):
         }
 
     def validate_thumbnail(self, value):
-        processed_value = resized_image_value(value, 640, 360)
+        processed_value = resized_image_value(value, 1280, 720)
         return processed_value
 
 
