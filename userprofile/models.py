@@ -1,20 +1,30 @@
+import os
+
 from django.db import models
+import uuid
+from django.db.models.signals import pre_save, post_save
+from django.dispatch import receiver
+from PaperfulRestAPI.settings import MEDIA_ROOT
+
+from PIL import Image
 from account.models import User
 from django.utils.translation import gettext as _
 
 
 def _userprofile_image_directory_path(instance, filename):
-    return 'user/{}/userprofiles/{}/image/{}'.format(instance.user.id, instance.nickname, filename)
+    return 'user/{}/userprofiles/{}/image/{}'.format(instance.user.uuid, instance.uuid, filename)
+
 
 
 class UserProfile(models.Model):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     create_at = models.DateTimeField(auto_now_add=True, help_text=_('생성 일자'))
     update_at = models.DateTimeField(auto_now=True, help_text=_('최근 프로필 요소 변경 일자'))
 
     user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='profile', help_text=_('해당 유저 프로필 소유자'))
     nickname = models.CharField(max_length=16, unique=True, help_text=_('외부로 노출되는 유저 프로필 닉네임'))
     intro = models.CharField(max_length=150, blank=True, help_text=_('유저 프로필의 소개 글'))
-    image = models.ImageField(upload_to=_userprofile_image_directory_path, default='userprofiles/profile_image_default.png', help_text=_('유저 프로필 이미지'))
+    image = models.ImageField(default='userprofiles/profile_image_default.png', max_length=255, upload_to=_userprofile_image_directory_path, help_text=_('유저 프로필 이미지'))
     subscribers = models.ManyToManyField('self', through='Subscribe', symmetrical=False, blank=True, related_name='subscriptions', help_text=_('유저 프로필을 구독하는 구독자 목록'))
     bookmarks = models.ManyToManyField('post.Post', through='Bookmark', blank=True,
                                        related_name='bookmark_user_profiles', help_text=_('해당 유저가 책갈피한 post 목록'))
@@ -26,17 +36,6 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.nickname
-
-    # def save(self, *args, **kwargs):
-    #     # id 값을 userprofiles 저장하는 순간 알기 위함
-    #     # 이미지 저장할 때 씀.
-    #     if self.image:
-    #         if self.id is None:
-    #             temp_image = self.image
-    #             self.image = None
-    #             super().save(*args, **kwargs)
-    #             self.image = temp_image
-    #     super().save(*args, **kwargs)
 
 
 class Subscribe(models.Model):

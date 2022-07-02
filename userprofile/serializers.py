@@ -1,11 +1,16 @@
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
+from io import BytesIO
 
 from PaperfulRestAPI.config.domain import host_domain
+from PaperfulRestAPI.tools.resized_image_for_serializer_validate import resized_image_value
 from userprofile.models import UserProfile
 from django.utils.translation import gettext as _
 from rest_framework.exceptions import ValidationError
+from PIL import Image
+from django.core.files.uploadedfile import TemporaryUploadedFile, InMemoryUploadedFile
+
 
 class BaseUserProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,6 +23,10 @@ class BaseUserProfileSerializer(serializers.ModelSerializer):
         read_only_fields = [
             'id'
         ]
+
+    def validate_image(self, value):
+        processed_value = resized_image_value(value, 160, 160)
+        return processed_value
 
 
 class UserProfileDetailSerializer(BaseUserProfileSerializer):

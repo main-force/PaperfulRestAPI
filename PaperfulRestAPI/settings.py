@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'phonenumber_field',
     'drf_spectacular',
+    'django_cleanup.apps.CleanupConfig',
 ]
 
 # 커스텀 app
@@ -53,6 +54,7 @@ INSTALLED_APPS += [
     'auth.apps.AuthConfig',
     'report.apps.ReportConfig',
     'postcollection.apps.PostcollectionConfig'
+
 ]
 
 MIDDLEWARE = [
@@ -202,3 +204,7 @@ SPECTACULAR_SETTINGS = {
     #     'OPERATIONS_SORTER': 'alpha'
     # }
 }
+
+FILE_UPLOAD_HANDLERS = [
+    'django.core.files.uploadhandler.TemporaryFileUploadHandler',
+]

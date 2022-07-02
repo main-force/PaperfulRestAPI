@@ -3,6 +3,7 @@ from django.contrib.auth.models import (
 )
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
+import uuid
 
 
 class UserManager(BaseUserManager):
@@ -32,6 +33,7 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     email = models.EmailField(max_length=255, unique=True)
     username = models.CharField(max_length=30)
     phone_number = PhoneNumberField()

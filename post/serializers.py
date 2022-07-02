@@ -5,6 +5,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 import post.models
+from PaperfulRestAPI.tools.resized_image_for_serializer_validate import resized_image_value
 from post.models import Post, Tag
 from django.utils.text import Truncator
 
@@ -64,6 +65,10 @@ class BasePostSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'content': {'trim_whitespace': False}
         }
+
+    def validate_thumbnail(self, value):
+        processed_value = resized_image_value(value, 640, 360)
+        return processed_value
 
 
 @extend_schema_serializer()
