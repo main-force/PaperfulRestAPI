@@ -61,7 +61,7 @@ class Post(models.Model, HitCountMixin):
     create_at = models.DateTimeField(auto_now_add=True, help_text=_('글이 생성 된 날짜 및 시간'))
     update_at = models.DateTimeField(auto_now=True, help_text=_('글이 수정 된 날짜 및 시간'))
 
-    thumbnail = models.ImageField(blank=True, upload_to=_thumbnail_directory_path, help_text=_('글의 썸네일 이미지'))
+    thumbnail = models.ImageField(blank=True, max_length=255, upload_to=_thumbnail_directory_path, help_text=_('글의 썸네일 이미지'))
     writer = models.ForeignKey(UserProfile, on_delete=models.CASCADE, help_text=_('글의 작가 오브젝트'))
     intro = models.TextField(blank=True, help_text=_('글의 인트로'))
     title = models.CharField(max_length=100, help_text=_('글의 제목'))
