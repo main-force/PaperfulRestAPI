@@ -8,7 +8,7 @@ from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 
 from PaperfulRestAPI.config.domain import host_domain
-from PaperfulRestAPI.config.permissions import IsOwnerOrReadOnly, AllowAny, IsOwnerOnly
+from PaperfulRestAPI.config.permissions import IsOwnerOrReadOnly, AllowAny, IsOwnerOnly, IsOwnerOrReadOnlyWithPostStatus
 
 from PaperfulRestAPI.tools.getters import get_post_object
 from auth.openapi.parameters import USER_TOKEN_PARAMETER
@@ -58,9 +58,11 @@ class PostListAPIView(ListAPIView):
     get=extend_schema(
         tags=['글'],
         summary='특정 글 조회',
-        description='status값이 "O"인 글만 제공합니다.',
+        description='특정 글을 조회할 수 있습니다.',
         responses=PostDetailSerializer,
-        auth=[]
+        parameters=[
+            OpenApiParameter(name='status', description='글의 상태(default="O"). "T"로 설정 시, 임시 저장글을 불러옵니다. 임시 저장글은 소유자만 조회할 수 있습니다.', required=False, type=str),
+        ],
     ),
     patch=extend_schema(
         tags=['글'],
@@ -79,11 +81,12 @@ class PostListAPIView(ListAPIView):
     ),
 )
 class PostDetailAPIView(APIView):
-    permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = [IsOwnerOrReadOnlyWithPostStatus]
 
     def get_object(self, pk):
         try:
-            post = Post.objects.get(id=pk)
+            status = self.request.GET.get('status', 'O')
+            post = Post.objects.get(id=pk, status=status)
             self.check_object_permissions(self.request, post)
             return post
         except ObjectDoesNotExist:
@@ -91,7 +94,7 @@ class PostDetailAPIView(APIView):
 
     def get(self, request, pk):
         post = self.get_object(pk)
-        if post.status == 'O':
+        if post:
             hit_count = post.hit_count
             HitCountMixin.hit_count(request, hit_count)
             serializer = PostDetailSerializer(post)
@@ -123,37 +126,6 @@ class PostDetailAPIView(APIView):
         if post:
             post.delete()
             return Response(status=204)
-        else:
-            data = {
-                'messages': '해당 글을 찾을 수 없습니다.'
-            }
-            return Response(data=data, status=404)
-
-
-@extend_schema_view(
-    get=extend_schema(
-        tags=['글'],
-        summary='특정 임시 저장 글 조회',
-        description='status값이 "T"인 글만 조회합니다.',
-        responses=PostDetailSerializer,
-    ),
-)
-class TemporalPostDetailAPIView(APIView):
-    permission_classes = [IsOwnerOnly]
-
-    def get_object(self, pk):
-        try:
-            post = Post.objects.get(id=pk, status='T')
-            self.check_object_permissions(self.request, post)
-            return post
-        except ObjectDoesNotExist:
-            return None
-
-    def get(self, request, pk):
-        post = self.get_object(pk)
-        if post:
-            serializer = PostDetailSerializer(post)
-            return Response(serializer.data)
         else:
             data = {
                 'messages': '해당 글을 찾을 수 없습니다.'
