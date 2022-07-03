@@ -84,6 +84,44 @@ class UserProfilePostListAPIView(ListAPIView):
 
 
 @extend_schema_view(
+    get=extend_schema(
+        tags=['글'],
+        summary=_('특정 유저 프로필의 임시 저장 글 목록 조회'),
+        description=_('글 목록 조회 시, 글의 status값이 "T"인 글만 제공합니다.'),
+    ),
+)
+class UserProfileTemporalPostListAPIView(ListAPIView):
+    pagination_class = PostLimitOffsetPagination
+    queryset = Post.objects.filter(status='T').order_by('-create_at')
+    serializer_class = PostListSerializer
+    permission_classes = [IsOwnerOnly]
+    lookup_url_kwarg = 'user_profile_pk'
+
+    def get_user_profile(self, pk):
+        try:
+            user_profile = UserProfile.objects.get(id=pk)
+            self.check_object_permissions(self.request, user_profile)
+            return user_profile
+        except ObjectDoesNotExist:
+            return None
+
+    def get(self, request, *args, **kwargs):
+        user_profile_pk = self.kwargs.get(self.lookup_url_kwarg)
+        user_profile = self.get_user_profile(user_profile_pk)
+        if user_profile:
+            post_list = self.get_queryset().filter(writer=user_profile)
+            result = self.paginate_queryset(post_list)
+            serializer = PostListSerializer(result, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        else:
+            data = {
+                'messages': '해당 프로필을 찾을 수 없습니다.'
+            }
+            return Response(data=data, status=404)
+
+
+@extend_schema_view(
     post=extend_schema(
         tags=['댓글'],
         summary=_('댓글 작성'),

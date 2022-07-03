@@ -20,7 +20,6 @@ from django.core.validators import MaxLengthValidator
 from django.core.exceptions import ValidationError
 
 
-
 @extend_schema_view(
     get=extend_schema(
         tags=[_('유저 프로필')],
