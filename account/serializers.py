@@ -3,6 +3,7 @@ from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
+import account.validators
 from PaperfulRestAPI.config.domain import host_domain
 from account.models import User
 from auth.models import PhoneNumberIdentifyToken
@@ -25,7 +26,12 @@ class UserSignupSerializer(serializers.Serializer):
         write_only=True,
         required=True,
         validators=[validate_password],
-        help_text=_('로그인시 사용할 패스워드')
+        help_text=_('로그인시 사용할 패스워드. 다음 조건들을 모두 만족해야합니다.<br>' +
+                    '- 최소 8자 이상<br>' +
+                    f'- 특수문자 {account.validators.SymbolPasswordValidator.allow_symbols} 중 최소 1개 이상<br>' +
+                    '- 숫자 [0-9] 중 최소 1개 이상<br>' +
+                    '- 문자 [a-z] 중 최소 1개 이상'),
+
     )
     password2 = serializers.CharField(
         write_only=True,

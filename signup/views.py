@@ -4,19 +4,22 @@ from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_view, extend_schema, OpenApiParameter, OpenApiResponse
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+import account.validators
 from PaperfulRestAPI.config.permissions import AllowAny
 from django.core.exceptions import ValidationError
 from account.models import User
 
 from account.serializers import UserSignupSerializer
 from signup.serializers import EmailSerializer, EmailValidateResponseSerializer
+from django.utils.translation import gettext_lazy as _
 
 
 @extend_schema_view(
     post=extend_schema(
         tags=['회원가입'],
         summary='유저 생성',
-        description='유저 생성을 할 수 있습니다.',
+        description=_('유저 생성을 할 수 있습니다.'),
         auth=[],
         request=UserSignupSerializer,
         responses={
