@@ -3,7 +3,6 @@ from django.utils import timezone
 from datetime import timedelta
 
 from phonenumber_field.modelfields import PhoneNumberField
-
 from PaperfulRestAPI.tools.random_generator import get_sixteen_random_token
 from django.utils.translation import gettext as _
 

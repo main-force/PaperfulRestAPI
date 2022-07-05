@@ -13,6 +13,8 @@ import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+import PaperfulRestAPI.config.si
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
@@ -94,8 +96,14 @@ WSGI_APPLICATION = 'PaperfulRestAPI.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'paperful',
+        'USER': 'mainforce',
+        'PASSWORD': PaperfulRestAPI.config.si.DB_USER_PASSWORD,
+        'HOST': '127.0.0.1',
+        'PORT': '5432'
     }
 }
 
