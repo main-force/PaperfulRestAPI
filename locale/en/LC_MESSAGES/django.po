@@ -1,0 +1,944 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-07-05 23:21+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: PaperfulRestAPI/schema.py:18
+#, python-format
+msgid "\"%s\"이(가) prefix 된 토큰 기반 인증"
+msgstr ""
+
+#: PaperfulRestAPI/schema.py:27
+#, python-format
+msgid "Token-based authentication with required prefix \"%s\""
+msgstr ""
+
+#: PaperfulRestAPI/settings.py:143
+msgid "Korean"
+msgstr ""
+
+#: PaperfulRestAPI/settings.py:144
+msgid "English"
+msgstr ""
+
+#: account/serializers.py:16
+msgid ""
+"회원 가입을 위한 이메일. 가입 가능 여부를 확인 후에 시도할 것을 권장합니다."
+msgstr ""
+
+#: account/serializers.py:21
+msgid "회원 가입을 위한 실명. 실명은 외부로 노출되지 않습니다."
+msgstr ""
+
+#: account/serializers.py:28
+msgid "로그인시 사용할 패스워드"
+msgstr ""
+
+#: account/serializers.py:33
+msgid "패스워드 확인"
+msgstr ""
+
+#: account/serializers.py:39
+msgid "휴대폰 번호 특정을 위한 Token값. 휴대폰 인증 api시 획득할 수 있습니다."
+msgstr ""
+
+#: account/serializers.py:48
+msgid "두 패스워드가 일치하지 않습니다."
+msgstr ""
+
+#: account/serializers.py:50
+msgid "토큰 값에 해당하는 phone_number이 존재하지 않습니다."
+msgstr ""
+
+#: account/validators.py:12 account/validators.py:19
+msgid "패스워드는 최소 특수문자 1개를 포함해야 합니다: "
+msgstr ""
+
+#: account/validators.py:28 account/validators.py:34
+msgid "패스워드는 최소 숫자 1개를 포함해야 합니다: 0-9."
+msgstr ""
+
+#: account/validators.py:42 account/validators.py:48
+msgid "패스워드는 최소 영어 소문자 1개를 포함해야 합니다: a-z."
+msgstr ""
+
+#: account/views.py:9
+msgid "인증"
+msgstr ""
+
+#: account/views.py:10
+msgid "로그아웃"
+msgstr ""
+
+#: account/views.py:11
+msgid "유저 식별을 위한 Token을 삭제합니다."
+msgstr ""
+
+#: auth/models.py:13 auth/models.py:27
+msgid "+82010xxxxxxxx 형태로 입력해주십시오."
+msgstr ""
+
+#: auth/models.py:14
+msgid "휴대폰번호 인증을 위한 인증번호. String이 아닌, Integer 타입입니다."
+msgstr ""
+
+#: auth/models.py:28
+msgid "휴대폰 번호 획득을 위한 token값 입니다."
+msgstr ""
+
+#: auth/openapi/parameters.py:8
+msgid "유저 인증을 위한 Token 값"
+msgstr ""
+
+#: auth/serializers.py:19
+msgid "로그인을 위한 이메일"
+msgstr ""
+
+#: auth/serializers.py:20
+msgid "로그인을 위한 패스워드"
+msgstr ""
+
+#: auth/serializers.py:21
+msgid "유저 식별을 위한 token 값"
+msgstr ""
+
+#: auth/serializers.py:121
+msgid ""
+"휴대폰번호에 해당하는 token값. 인증 요청 후 3분이 지나거나, 5회이상 인증 실패"
+"시 해당 인증번호가 만료됩니다."
+msgstr ""
+
+#: auth/views.py:21
+msgid "로그인"
+msgstr ""
+
+#: auth/views.py:22
+msgid "유저 식별을 위한 Token을 발행할 수 있습니다."
+msgstr ""
+
+#: auth/views.py:47
+msgid "휴대폰 인증번호 메시지 전송"
+msgstr ""
+
+#: auth/views.py:48
+msgid "휴대폰 번호 인증을 위한 인증번호 메시지를 전송합니다."
+msgstr ""
+
+#: auth/views.py:88
+msgid "휴대폰 인증번호 검증"
+msgstr ""
+
+#: auth/views.py:89
+msgid ""
+"특정 휴대폰으로 전송한 인증번호를 검증합니다. 휴대폰번호 인증 메시지를 전송 "
+"후에 사용하는 것을 권장합니다."
+msgstr ""
+
+#: comment/models.py:14
+msgid "주목한 유저프로필 목록"
+msgstr ""
+
+#: comment/models.py:19
+msgid "댓글을 작성한 post"
+msgstr ""
+
+#: comment/models.py:20
+msgid "부모 댓글"
+msgstr ""
+
+#: comment/models.py:21 comment/serializers.py:41
+msgid "댓글에서 언급한 유저 프로필 목록"
+msgstr ""
+
+#: comment/models.py:22
+msgid "댓글 작성자"
+msgstr ""
+
+#: comment/models.py:23
+msgid "댓글 내용"
+msgstr ""
+
+#: comment/models.py:25
+msgid "댓글의 상태, default: \"O\""
+msgstr ""
+
+#: comment/paginations.py:9 post/paginations.py:10
+#: postcollection/paginations.py:10 userprofile/paginations.py:10
+msgid "페이지 당 results 요소의 최대 개수"
+msgstr ""
+
+#: comment/paginations.py:11 post/paginations.py:12
+#: postcollection/paginations.py:12 userprofile/paginations.py:12
+msgid "results 첫 번째 요소의 index"
+msgstr ""
+
+#: comment/paginations.py:32
+msgid "조회 할 수 있는 댓글의 총 개수"
+msgstr ""
+
+#: comment/paginations.py:37 post/paginations.py:38
+#: postcollection/paginations.py:38 userprofile/paginations.py:39
+msgid "results 요소의 개수"
+msgstr ""
+
+#: comment/paginations.py:55 post/paginations.py:56
+#: postcollection/paginations.py:56 userprofile/paginations.py:57
+msgid "다음 페이지 조회 uri"
+msgstr ""
+
+#: comment/paginations.py:63 post/paginations.py:64
+#: postcollection/paginations.py:64 userprofile/paginations.py:65
+msgid "이전 페이지 조회 uri"
+msgstr ""
+
+#: comment/serializers.py:22
+msgid "언급하고자 하는 유저 프로필의 id 목록"
+msgstr ""
+
+#: comment/serializers.py:40
+msgid "댓글을 작성한 글의 id"
+msgstr ""
+
+#: comment/serializers.py:42
+msgid "댓글을 작성한 유저 프로필"
+msgstr ""
+
+#: comment/serializers.py:43
+msgid "대댓글 조회 uri. 대댓글이 존재하지 않을 시 null."
+msgstr ""
+
+#: comment/serializers.py:44
+msgid "자식 댓글의 개수"
+msgstr ""
+
+#: comment/serializers.py:45
+msgid "해당 댓글의 주목 수"
+msgstr ""
+
+#: comment/serializers.py:46 comment/serializers.py:104
+msgid "댓글이라면 True, 대댓글이라면 False"
+msgstr ""
+
+#: comment/serializers.py:99
+msgid "대댓글을 작성한 글의 id"
+msgstr ""
+
+#: comment/serializers.py:100
+msgid "부모 댓글의 id"
+msgstr ""
+
+#: comment/serializers.py:101
+msgid "대댓글에서 언급한 유저 프로필 목록"
+msgstr ""
+
+#: comment/serializers.py:102
+msgid "대댓글을 작성한 유저 프로필"
+msgstr ""
+
+#: comment/serializers.py:103
+msgid "해당 대댓글의 주목 수"
+msgstr ""
+
+#: post/models.py:32
+msgid "Temporary save"
+msgstr ""
+
+#: post/models.py:33
+msgid "Open"
+msgstr ""
+
+#: post/models.py:34
+msgid "Private"
+msgstr ""
+
+#: post/models.py:35
+msgid "Ban"
+msgstr ""
+
+#: post/models.py:39
+msgid "General object"
+msgstr ""
+
+#: post/models.py:40
+msgid "Short text object"
+msgstr ""
+
+#: post/models.py:41
+msgid "Diary object"
+msgstr ""
+
+#: post/models.py:42
+msgid "Post Collection"
+msgstr ""
+
+#: post/models.py:52
+msgid "글의 오브젝트 타입"
+msgstr ""
+
+#: post/models.py:53 post/models.py:124
+msgid "글의 태그"
+msgstr ""
+
+#: post/models.py:54
+msgid "글을 주목하고 있는 유저 프로필 목록"
+msgstr ""
+
+#: post/models.py:58
+msgid "글의 조회수 확인을 위한 관계 필드"
+msgstr ""
+
+#: post/models.py:61
+msgid "글이 생성 된 날짜 및 시간"
+msgstr ""
+
+#: post/models.py:62
+msgid "글이 수정 된 날짜 및 시간"
+msgstr ""
+
+#: post/models.py:64
+msgid "글의 썸네일 이미지"
+msgstr ""
+
+#: post/models.py:65
+msgid "글의 작가 오브젝트"
+msgstr ""
+
+#: post/models.py:66 post/serializers.py:77
+msgid "글의 인트로"
+msgstr ""
+
+#: post/models.py:67
+msgid "글의 제목"
+msgstr ""
+
+#: post/models.py:68
+msgid "글의 내용"
+msgstr ""
+
+#: post/models.py:70
+msgid "글의 상태"
+msgstr ""
+
+#: post/models.py:73
+msgid "글을 쓴 날(추상적 개념; ex. 개발하기 싫은 날)"
+msgstr ""
+
+#: post/models.py:74
+msgid "글쓴 날의 날씨(추상적 개념; ex. 꿀꿀한 날씨)"
+msgstr ""
+
+#: post/models.py:100
+msgid "%(object_type)은 필수 입력 필드입니다."
+msgstr ""
+
+#: post/models.py:110
+msgid "주목한 유저 프로필"
+msgstr ""
+
+#: post/models.py:111
+msgid "유저프로필이 주목한 글"
+msgstr ""
+
+#: post/models.py:112
+msgid "주목한 날짜 및 시간"
+msgstr ""
+
+#: post/models.py:123
+msgid "태그한 글"
+msgstr ""
+
+#: post/models.py:125
+msgid "글이 태그 된 날짜"
+msgstr ""
+
+#: post/paginations.py:33
+msgid "조회 할 수 있는 글의 총 개수"
+msgstr ""
+
+#: post/serializers.py:76
+msgid "해당 글의 섬네일 이미지"
+msgstr ""
+
+#: post/serializers.py:78 post/serializers.py:143
+#: postcollection/serializers.py:37
+msgid "작가 오브젝트"
+msgstr ""
+
+#: post/serializers.py:79 post/serializers.py:144
+msgid "댓글 수"
+msgstr ""
+
+#: post/serializers.py:80 post/serializers.py:145
+msgid "조회 수"
+msgstr ""
+
+#: post/serializers.py:81 post/serializers.py:146
+msgid "주목 수"
+msgstr ""
+
+#: post/serializers.py:82
+msgid "해당 글의 상세 조회 uri"
+msgstr ""
+
+#: post/serializers.py:142
+msgid "글의 섬네일 이미지"
+msgstr ""
+
+#: postcollection/models.py:13
+msgid "글 모음집이 생성 된 날짜 및 시간"
+msgstr ""
+
+#: postcollection/models.py:14
+msgid "글 모음집이 수정 된 날짜 및 시간"
+msgstr ""
+
+#: postcollection/models.py:15
+msgid "글 모음집의 작가 오브젝트"
+msgstr ""
+
+#: postcollection/models.py:16
+msgid "글 모음집의 제목"
+msgstr ""
+
+#: postcollection/models.py:17
+msgid "글 모음집에 있는 글 목록"
+msgstr ""
+
+#: postcollection/models.py:28
+msgid "글 모음집"
+msgstr ""
+
+#: postcollection/models.py:29
+msgid "글 모음집에 있는 글"
+msgstr ""
+
+#: postcollection/models.py:30
+msgid "모음집에 추가한 날짜 및 시간"
+msgstr ""
+
+#: postcollection/models.py:33
+msgid "글 모음집 내 순서"
+msgstr ""
+
+#: postcollection/paginations.py:33
+msgid "조회 할 수 있는 모음집의 총 개수"
+msgstr ""
+
+#: postcollection/serializers.py:38
+msgid "글 모음집 내 글의 개수"
+msgstr ""
+
+#: postcollection/serializers.py:62
+msgid "글 오브젝트"
+msgstr ""
+
+#: postcollection/serializers.py:80
+msgid "글 모음집에 추가하고자 하는 post의 id"
+msgstr ""
+
+#: postcollection/views.py:29
+msgid "특정 글 모음집 조회"
+msgstr ""
+
+#: postcollection/views.py:30
+msgid "특정 글 모음집을 조회할 수 있습니다."
+msgstr ""
+
+#: postcollection/views.py:102
+msgid "특정 글 모음집 내 요소 목록 조회"
+msgstr ""
+
+#: postcollection/views.py:103
+msgid "요소 조회 시, 글의 status값이 “O”인 글만 제공합니다."
+msgstr ""
+
+#: postcollection/views.py:107
+msgid "특정 글 모음집에 글 요소 추가하기"
+msgstr ""
+
+#: postcollection/views.py:108
+msgid ""
+"특정 글 모음집에 글 요소를 추가 할 수 있습니다. 같은 글을 중복하여 추가할 수 "
+"있습니다."
+msgstr ""
+
+#: postcollection/views.py:169
+msgid "특정 글 모음집 내 요소 제거"
+msgstr ""
+
+#: postcollection/views.py:170
+msgid "특정 글 모음집에 요소를 제거 할 수 있습니다."
+msgstr ""
+
+#: signup/serializers.py:9
+msgid "회원 생성 가능 여부를 확인하기 위한 이메일"
+msgstr ""
+
+#: signup/serializers.py:20
+msgid "이메일을 반드시 포함해야합니다."
+msgstr ""
+
+#: signup/serializers.py:28
+msgid "해당 이메일로 계정 생성이 가능하다면 True, 가능하지 않다면 False."
+msgstr ""
+
+#: signup/serializers.py:29
+msgid "해당 이메일이 이메일의 형식이 맞다면 True, 이메일 형식이 아니라면 False"
+msgstr ""
+
+#: signup/serializers.py:30
+msgid "해당 이메일로 가입된 계정이 존재하지 않으면 True, 존재한다면 False"
+msgstr ""
+
+#: userprofile/attention/serializers.py:5 userprofile/bookmark/serializers.py:5
+msgid "주목하고자 하는 post의 id"
+msgstr ""
+
+#: userprofile/attention/serializers.py:9
+msgid "주목하고자 하는 comment의 id"
+msgstr ""
+
+#: userprofile/attention/serializers.py:13
+#: userprofile/bookmark/serializers.py:9
+msgid "주목했다면 True, 주목하지 않았다면 False."
+msgstr ""
+
+#: userprofile/attention/views.py:22
+msgid "주목 글 목록 조회"
+msgstr ""
+
+#: userprofile/attention/views.py:23 userprofile/bookmark/views.py:24
+msgid "글 목록 조회 시, status값이 “O”인 글만 제공합니다."
+msgstr ""
+
+#: userprofile/attention/views.py:27
+msgid "특정 글 주목"
+msgstr ""
+
+#: userprofile/attention/views.py:28
+msgid "특정 글을 주목할 수 있습니다."
+msgstr ""
+
+#: userprofile/attention/views.py:96
+msgid "특정 글 주목 여부 조회"
+msgstr ""
+
+#: userprofile/attention/views.py:97
+msgid "특정 글의 주목 여부를 확인할 수 있습니다."
+msgstr ""
+
+#: userprofile/attention/views.py:102
+msgid "특정 글 주목 취소"
+msgstr ""
+
+#: userprofile/attention/views.py:103
+msgid "특정 글의 주목을 취소할 수 있습니다."
+msgstr ""
+
+#: userprofile/attention/views.py:189
+msgid "특정 댓글 주목"
+msgstr ""
+
+#: userprofile/attention/views.py:190
+msgid "특정 댓글을 주목할 수 있습니다."
+msgstr ""
+
+#: userprofile/bookmark/views.py:23
+msgid "책갈피한 글 목록 조회"
+msgstr ""
+
+#: userprofile/bookmark/views.py:28
+msgid "특정 글 책갈피"
+msgstr ""
+
+#: userprofile/bookmark/views.py:29
+msgid "특정 글을 책갈피 할 수 있습니다."
+msgstr ""
+
+#: userprofile/bookmark/views.py:102
+msgid "특정 글 책갈피 여부 조회"
+msgstr ""
+
+#: userprofile/bookmark/views.py:103
+msgid "특정 글의 책갈피 여부를 확인할 수 있습니다."
+msgstr ""
+
+#: userprofile/bookmark/views.py:108
+msgid "특정 글 책갈피 취소"
+msgstr ""
+
+#: userprofile/bookmark/views.py:109
+msgid "특정 글의 책갈피를 취소할 수 있습니다."
+msgstr ""
+
+#: userprofile/comment/views.py:18
+msgid "대댓글 작성"
+msgstr ""
+
+#: userprofile/comment/views.py:19
+msgid ""
+"특정 유저프로필의 대댓글을 작성합니다. 유저가 소유한 유저 프로필로만 작성 가"
+"능합니다."
+msgstr ""
+
+#: userprofile/hide/serializers.py:5
+msgid "숨김 처리 하고자 하는 post의 id"
+msgstr ""
+
+#: userprofile/hide/serializers.py:9
+msgid "숨김 처리 하고자 하는 comment의 id"
+msgstr ""
+
+#: userprofile/hide/serializers.py:13
+msgid "숨김 처리 하고자 하는 user_profile의 id"
+msgstr ""
+
+#: userprofile/hide/serializers.py:17
+msgid "숨김 처리 했다면 True, 그렇지 않다면 False."
+msgstr ""
+
+#: userprofile/hide/views.py:28
+msgid "숨김 처리한 유저 프로필 목록 조회"
+msgstr ""
+
+#: userprofile/hide/views.py:29
+msgid "숨김 처리한 유저 프로필 목록을 조회할 수 있습니다."
+msgstr ""
+
+#: userprofile/hide/views.py:33
+msgid "유저 프로필 숨김 처리하기"
+msgstr ""
+
+#: userprofile/hide/views.py:34
+msgid "특정 유저 프로필을 숨김 처리 할 수 있습니다."
+msgstr ""
+
+#: userprofile/hide/views.py:102
+msgid "특정 유저 프로필 숨김 처리 여부 조회"
+msgstr ""
+
+#: userprofile/hide/views.py:103
+msgid "특정 유저 프로필의 숨김 처리 여부를 확인할 수 있습니다."
+msgstr ""
+
+#: userprofile/hide/views.py:108
+msgid "유저 프로필 숨김 취소"
+msgstr ""
+
+#: userprofile/hide/views.py:109
+msgid "특정 유저 프로필 숨김 처리를 취소할 수 있습니다."
+msgstr ""
+
+#: userprofile/hide/views.py:194
+msgid "글 숨김 처리하기"
+msgstr ""
+
+#: userprofile/hide/views.py:195
+msgid "특정 글을 숨김 처리 할 수 있습니다."
+msgstr ""
+
+#: userprofile/hide/views.py:246
+msgid "특정 글 숨김 처리 여부 조회"
+msgstr ""
+
+#: userprofile/hide/views.py:247
+msgid "특정 글의 숨김 처리 여부를 확인할 수 있습니다."
+msgstr ""
+
+#: userprofile/hide/views.py:252
+msgid "글 숨김 취소"
+msgstr ""
+
+#: userprofile/hide/views.py:253
+msgid "특정 글 숨김 처리를 취소할 수 있습니다."
+msgstr ""
+
+#: userprofile/hide/views.py:338
+msgid "댓글 숨김 처리하기"
+msgstr ""
+
+#: userprofile/hide/views.py:339
+msgid "특정 댓글을 숨김 처리 할 수 있습니다."
+msgstr ""
+
+#: userprofile/hide/views.py:390
+msgid "특정 댓글 숨김 처리 여부 조회"
+msgstr ""
+
+#: userprofile/hide/views.py:391
+msgid "특정 댓글의 숨김 처리 여부를 확인할 수 있습니다."
+msgstr ""
+
+#: userprofile/hide/views.py:396
+msgid "댓글 숨김 취소"
+msgstr ""
+
+#: userprofile/hide/views.py:397
+msgid "특정 댓글 숨김 처리를 취소할 수 있습니다."
+msgstr ""
+
+#: userprofile/models.py:21
+msgid "생성 일자"
+msgstr ""
+
+#: userprofile/models.py:22
+msgid "최근 프로필 요소 변경 일자"
+msgstr ""
+
+#: userprofile/models.py:24
+msgid "해당 유저 프로필 소유자"
+msgstr ""
+
+#: userprofile/models.py:25
+msgid "외부로 노출되는 유저 프로필 닉네임"
+msgstr ""
+
+#: userprofile/models.py:26
+msgid "유저 프로필의 소개 글"
+msgstr ""
+
+#: userprofile/models.py:27
+msgid "유저 프로필 이미지"
+msgstr ""
+
+#: userprofile/models.py:28
+msgid "유저 프로필을 구독하는 구독자 목록"
+msgstr ""
+
+#: userprofile/models.py:30
+msgid "해당 유저가 책갈피한 post 목록"
+msgstr ""
+
+#: userprofile/models.py:32
+msgid "유저 프로필이 숨김 처리 한 유저프로필 목록"
+msgstr ""
+
+#: userprofile/models.py:33
+msgid "유저 프로필이 숨김 처리한 post 목록"
+msgstr ""
+
+#: userprofile/models.py:34
+msgid "유저 프로필이 숨김 처리한 comment 목록"
+msgstr ""
+
+#: userprofile/paginations.py:33
+msgid "조회 할 수 있는 유저프로필의 총 개수"
+msgstr ""
+
+#: userprofile/post/views.py:24
+msgid "특정 유저 프로필의 글 목록 조회"
+msgstr ""
+
+#: userprofile/post/views.py:25
+msgid "특정 유저 프로필의 글 목록을 조회 할 수 있습니다."
+msgstr ""
+
+#: userprofile/post/views.py:32
+msgid "글 작성"
+msgstr ""
+
+#: userprofile/post/views.py:33
+msgid ""
+"특정 유저프로필의 글을 작성합니다. 유저가 소유한 유저 프로필로만 작성 가능합"
+"니다. weather, diary_day 필드는 \"diary\" 오브젝트만 가질 수 있습니다."
+msgstr ""
+
+#: userprofile/post/views.py:93
+msgid "댓글 작성"
+msgstr ""
+
+#: userprofile/post/views.py:94
+msgid ""
+"특정 유저프로필의 댓글을 작성합니다. 유저가 소유한 유저 프로필로만 작성 가능"
+"합니다."
+msgstr ""
+
+#: userprofile/postcollection/views.py:28
+msgid "특정 유저 프로필의 글 모음집 목록 조회"
+msgstr ""
+
+#: userprofile/postcollection/views.py:29
+msgid "글 모음집 목록을 조회할 수 있습니다."
+msgstr ""
+
+#: userprofile/postcollection/views.py:33
+msgid "글 모음집 생성"
+msgstr ""
+
+#: userprofile/postcollection/views.py:34
+msgid "특정 유저프로필의 글 모음집을 생성합니다."
+msgstr ""
+
+#: userprofile/report/serializers.py:5
+msgid "신고하고자 하는 post의 id"
+msgstr ""
+
+#: userprofile/report/serializers.py:9
+msgid "신고하고자 하는 comment의 id"
+msgstr ""
+
+#: userprofile/report/serializers.py:13
+msgid "신고하고자 하는 user_profile의 id"
+msgstr ""
+
+#: userprofile/report/views.py:20
+msgid "특정 유저 프로필 신고"
+msgstr ""
+
+#: userprofile/report/views.py:21
+msgid "특정 유저 프로필을 신고할 수 있습니다."
+msgstr ""
+
+#: userprofile/report/views.py:86
+msgid "특정 글 신고"
+msgstr ""
+
+#: userprofile/report/views.py:87
+msgid "특정 글을 신고할 수 있습니다."
+msgstr ""
+
+#: userprofile/report/views.py:152
+msgid "특정 댓글 신고"
+msgstr ""
+
+#: userprofile/report/views.py:153
+msgid "특정 댓글을 신고할 수 있습니다."
+msgstr ""
+
+#: userprofile/serializers.py:33
+msgid "유저 프로필 사진 uri"
+msgstr ""
+
+#: userprofile/serializers.py:34
+msgid "유저프로필을 구독하는 구독자 수"
+msgstr ""
+
+#: userprofile/serializers.py:59
+msgid "유저프로필 생성 가능 여부를 확인하기 위한 닉네임"
+msgstr ""
+
+#: userprofile/serializers.py:70
+msgid "nickname을 반드시 포함해야합니다."
+msgstr ""
+
+#: userprofile/serializers.py:78
+msgid ""
+"해당 닉네임으로 유저 프로필 생성이 가능하다면 True, 가능하지 않다면 False."
+msgstr ""
+
+#: userprofile/serializers.py:79
+msgid "해당 닉네임이 형식에 맞다면 True, 이메일 형식이 아니라면 False"
+msgstr ""
+
+#: userprofile/serializers.py:80
+msgid "해당 닉네임으로 가입된 계정이 존재하지 않으면 True, 존재한다면 False"
+msgstr ""
+
+#: userprofile/subscription/serializers.py:6
+msgid "구독했다면 True, 구독하지 않았다면 False."
+msgstr ""
+
+#: userprofile/subscription/serializers.py:10
+msgid "구독하고자 하는 user_profile의 id"
+msgstr ""
+
+#: userprofile/subscription/views.py:20
+msgid "구독 목록 조회"
+msgstr ""
+
+#: userprofile/subscription/views.py:21
+msgid "특정 유저 프로필의 구독 목록을 조회할 수 있습니다."
+msgstr ""
+
+#: userprofile/subscription/views.py:25
+msgid "구독하기"
+msgstr ""
+
+#: userprofile/subscription/views.py:26
+msgid "특정 유저 프로필을 구독할 수 있습니다."
+msgstr ""
+
+#: userprofile/subscription/views.py:94
+msgid "특정 유저 프로필 구독 여부 조회"
+msgstr ""
+
+#: userprofile/subscription/views.py:95
+msgid "특정 유저 프로필의 구독 여부를 확인할 수 있습니다."
+msgstr ""
+
+#: userprofile/subscription/views.py:100
+msgid "구독 취소"
+msgstr ""
+
+#: userprofile/subscription/views.py:101
+msgid "특정 유저프로필 구독을 취소할 수 있습니다."
+msgstr ""
+
+#: userprofile/views.py:25 userprofile/views.py:33 userprofile/views.py:66
+#: userprofile/views.py:122 userprofile/views.py:131 userprofile/views.py:140
+msgid "유저 프로필"
+msgstr ""
+
+#: userprofile/views.py:26
+msgid "유저 프로필 목록 조회"
+msgstr ""
+
+#: userprofile/views.py:27
+msgid "유저가 가지고 있는 유저 프로필 목록을 조회 할 수 있습니다."
+msgstr ""
+
+#: userprofile/views.py:34
+msgid "유저 프로필 생성"
+msgstr ""
+
+#: userprofile/views.py:35
+msgid "유저 프로필을 생성할 수 있습니다."
+msgstr ""
+
+#: userprofile/views.py:67
+msgid "유저 프로필 닉네임 검증"
+msgstr ""
+
+#: userprofile/views.py:68
+msgid "해당 닉네임으로 유저 프로필 생성이 가능한지 검증합니다."
+msgstr ""
+
+#: userprofile/views.py:123
+msgid "특정 유저 프로필 조회"
+msgstr ""
+
+#: userprofile/views.py:124
+msgid "특정 유저 프로필을 조회 할 수 있습니다."
+msgstr ""
+
+#: userprofile/views.py:132
+msgid "특정 유저 프로필 수정"
+msgstr ""
+
+#: userprofile/views.py:133
+msgid ""
+"특정 유저 프로필을 수정할 수 있습니다. key값이 존재하는 요소만 수정합니다."
+msgstr ""
+
+#: userprofile/views.py:141
+msgid "특정 유저 프로필 삭제"
+msgstr ""
+
+#: userprofile/views.py:142
+msgid "특정 유저 프로필을 삭제할 수 있습니다."
+msgstr ""

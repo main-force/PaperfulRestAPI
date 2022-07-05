@@ -15,7 +15,7 @@ from post.serializers import PostListSerializer, BasePostSerializer, PostDetailS
 from userprofile.models import UserProfile
 
 from django.urls import reverse
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from PaperfulRestAPI.tools.getters import get_post_object
 
 @extend_schema_view(

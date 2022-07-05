@@ -4,7 +4,7 @@ from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 from hitcount.models import HitCountMixin, HitCount
 from django.urls import reverse
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 from django.core.exceptions import ValidationError
 

@@ -8,7 +8,7 @@ from PaperfulRestAPI.settings import MEDIA_ROOT
 
 from PIL import Image
 from account.models import User
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 
 def _userprofile_image_directory_path(instance, filename):

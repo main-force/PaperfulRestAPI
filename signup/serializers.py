@@ -1,6 +1,6 @@
 from django.core.validators import validate_email
 from drf_spectacular.utils import extend_schema_serializer
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 

@@ -12,7 +12,7 @@ from PaperfulRestAPI.tools.sms_api import MessageAPI
 from auth.models import CertificationNumber
 from auth.serializers import AuthCustomTokenSerializer, BasePhoneNumberSerializer, BaseCertificationNumberSerializer, \
     CertificationNumberSerializer, BasePhoneNumberIdentifyTokenSerializer
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 
 @extend_schema_view(

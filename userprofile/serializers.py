@@ -6,7 +6,7 @@ from io import BytesIO
 from PaperfulRestAPI.config.domain import host_domain
 from PaperfulRestAPI.tools.resized_image_for_serializer_validate import resized_image_value
 from userprofile.models import UserProfile
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from rest_framework.exceptions import ValidationError
 from PIL import Image
 from django.core.files.uploadedfile import TemporaryUploadedFile, InMemoryUploadedFile

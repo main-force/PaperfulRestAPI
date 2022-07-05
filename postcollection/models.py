@@ -1,7 +1,7 @@
 from django.db import models
 
 from hitcount.models import HitCountMixin, HitCount
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 from post.models import Post
 from userprofile.models import UserProfile

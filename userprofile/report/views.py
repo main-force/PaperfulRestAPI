@@ -12,7 +12,7 @@ from report.serializers import BaseReportUserProfileSerializer, BaseReportPostSe
 from userprofile.models import UserProfile
 from userprofile.report.serializers import ReportUserProfileIdRequestSerializer, ReportPostIdRequestSerializer, \
     ReportCommentIdRequestSerializer
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 @extend_schema_view(
     post=extend_schema(

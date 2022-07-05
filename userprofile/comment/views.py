@@ -9,7 +9,7 @@ from PaperfulRestAPI.tools.getters import get_comment_object
 from comment.paginations import CommentLimitOffsetPagination
 from comment.serializers import BaseCommentSerializer, ChildCommentSerializer
 from userprofile.models import UserProfile
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 
 @extend_schema_view(

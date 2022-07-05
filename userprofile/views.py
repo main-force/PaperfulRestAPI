@@ -15,7 +15,7 @@ from userprofile.paginations import UserProfileLimitOffsetPagination
 from userprofile.serializers import UserProfileDetailSerializer, BaseUserProfileSerializer, \
     NicknameValidateResponseSerializer, NicknameSerializer
 from django.urls import reverse
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from django.core.validators import MaxLengthValidator
 from django.core.exceptions import ValidationError
 

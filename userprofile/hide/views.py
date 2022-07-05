@@ -19,7 +19,7 @@ from userprofile.hide.serializers import HideUserProfileIdRequestSerializer, Hid
 from userprofile.models import UserProfile
 from userprofile.paginations import UserProfileLimitOffsetPagination
 from userprofile.serializers import UserProfileDetailSerializer
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 
 @extend_schema_view(

@@ -12,7 +12,7 @@ from django.utils.text import Truncator
 from PaperfulRestAPI.config.domain import host_domain
 from userprofile.models import UserProfile
 from userprofile.serializers import UserProfileDetailSerializer
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 
 class DynamicFieldsPostSerializer(serializers.ModelSerializer):

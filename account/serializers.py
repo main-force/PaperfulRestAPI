@@ -6,7 +6,8 @@ from rest_framework.validators import UniqueValidator
 from PaperfulRestAPI.config.domain import host_domain
 from account.models import User
 from auth.models import PhoneNumberIdentifyToken
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
+
 
 class UserSignupSerializer(serializers.Serializer):
     email = serializers.EmailField(

@@ -1,7 +1,7 @@
 from django.db import models
 from userprofile.models import UserProfile
 from post.models import Post
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 
 COMMENT_STATUS = (

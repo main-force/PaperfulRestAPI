@@ -11,7 +11,6 @@ from PaperfulRestAPI.config.domain import host_domain
 from PaperfulRestAPI.config.permissions import IsOwnerOrReadOnly, AllowAny, IsOwnerOnly, IsOwnerOrReadOnlyWithPostStatus
 
 from PaperfulRestAPI.tools.getters import get_post_object
-from auth.openapi.parameters import USER_TOKEN_PARAMETER
 from comment.paginations import CommentLimitOffsetPagination
 from comment.serializers import ParentCommentSerializer
 from post.models import Post
@@ -19,11 +18,8 @@ from post.serializers import PostListSerializer, PostDetailSerializer, BasePostS
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from post.paginations import PostLimitOffsetPagination
-from django.urls import reverse
 from django.db.models import Q
-from drf_spectacular.extensions import OpenApiAuthenticationExtension
-from comment.models import Comment
-from rest_framework.exceptions import ValidationError, NotFound
+from rest_framework.exceptions import NotFound
 
 
 @extend_schema_view(

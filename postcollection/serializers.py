@@ -13,7 +13,7 @@ from post.serializers import PostListSerializer
 from postcollection.models import PostCollection, PostCollectionElement
 from userprofile.models import UserProfile
 from userprofile.serializers import UserProfileDetailSerializer
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 
 class BasePostCollectionSerializer(serializers.ModelSerializer):

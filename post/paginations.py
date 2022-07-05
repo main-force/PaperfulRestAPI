@@ -1,7 +1,7 @@
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from collections import OrderedDict
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 
 class PostLimitOffsetPagination(LimitOffsetPagination):
