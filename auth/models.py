@@ -6,12 +6,14 @@ from phonenumber_field.modelfields import PhoneNumberField
 from PaperfulRestAPI.tools.random_generator import get_sixteen_random_token
 from django.utils.translation import gettext as _
 
+def after_3minutes():
+    return timezone.now() + timedelta(minutes=3)
 
 class CertificationNumber(models.Model):
     phone_number = PhoneNumberField(help_text=_('+82010xxxxxxxx 형태로 입력해주십시오.'))
     certification_number = models.IntegerField(help_text=_('휴대폰번호 인증을 위한 인증번호. String이 아닌, Integer 타입입니다.'))
     create_at = models.DateTimeField(auto_now_add=True)
-    expire_at = models.DateTimeField(default=timezone.now() + timedelta(minutes=3))
+    expire_at = models.DateTimeField(default=after_3minutes)
     num_failed = models.PositiveIntegerField(default=0)
 
     class Meta:
