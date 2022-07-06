@@ -92,6 +92,7 @@ class PostListSerializer(serializers.ModelSerializer):
     def get_writer(self, obj):
         return UserProfileDetailSerializer(obj.writer).data
 
+    @extend_schema_field(OpenApiTypes.STR)
     def get_intro(self, obj):
         if obj.intro:
             return obj.intro
@@ -170,7 +171,6 @@ class PostDetailSerializer(DynamicFieldsPostSerializer):
 
     class Meta:
         model = Post
-        depth = 1
         fields = [
             'id',
             'object_type',

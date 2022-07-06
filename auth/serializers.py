@@ -1,5 +1,7 @@
 from django.contrib.auth import authenticate
 from django.core.exceptions import ObjectDoesNotExist
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from django.utils import timezone
 
@@ -118,6 +120,7 @@ class CertificationNumberSerializer(BaseCertificationNumberSerializer):
 
 
 class BasePhoneNumberIdentifyTokenSerializer(serializers.ModelSerializer):
+
     token = serializers.ReadOnlyField(source='phone_number_identify_token.token', help_text=_('휴대폰번호에 해당하는 token값. 인증 요청 후 3분이 지나거나, 5회이상 인증 실패시 해당 인증번호가 만료됩니다.'))
     phone_number = PhoneNumberField(write_only=True)
     class Meta:

@@ -19,11 +19,13 @@ class PostCursorPagination(CursorPagination):
                 'next': {
                     'type': 'string',
                     'nullable': True,
+                    'format': 'uri',
                     'description': _('다음 페이지 조회 uri')
                 },
                 'previous': {
                     'type': 'string',
                     'nullable': True,
+                    'format': 'uri',
                     'description': _('이전 페이지 조회 uri')
                 },
                 'results': schema,
