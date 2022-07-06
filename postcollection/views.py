@@ -5,20 +5,13 @@ from rest_framework.generics import ListAPIView
 
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from PaperfulRestAPI.config.domain import host_domain
-from PaperfulRestAPI.config.permissions import IsOwnerOrReadOnly, IsOwnerOnly
-from comment.paginations import CommentLimitOffsetPagination
-from comment.serializers import BaseCommentSerializer, ParentCommentSerializer
-from post.models import Post
-from post.paginations import PostLimitOffsetPagination
-from post.serializers import PostListSerializer, BasePostSerializer, PostDetailSerializer
+
+from PaperfulRestAPI.config.permissions import IsOwnerOnly
+from post.paginations import PostCursorPagination
 from postcollection.models import PostCollection, PostCollectionElement
-from postcollection.paginations import PostCollectionLimitOffsetPagination
 from postcollection.serializers import BasePostCollectionSerializer, PostCollectionDetailSerializer, \
     PostCollectionPostIdRequestSerializer, PostCollectionElementSerializer
-from userprofile.models import UserProfile
 
-from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from PaperfulRestAPI.tools.getters import get_post_object
 
@@ -113,7 +106,7 @@ class PostCollectionDetailAPIView(APIView):
     )
 )
 class PostCollectionElementListAPIView(ListAPIView):
-    pagination_class = PostLimitOffsetPagination
+    pagination_class = PostCursorPagination
     serializer_class = PostCollectionElementSerializer
     permission_classes = [IsOwnerOnly]
 

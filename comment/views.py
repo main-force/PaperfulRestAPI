@@ -12,7 +12,7 @@ from PaperfulRestAPI.tools.getters import get_parent_comment_object
 
 from comment.models import Comment
 from comment.serializers import BaseCommentSerializer, ParentCommentSerializer, ChildCommentSerializer
-from comment.paginations import CommentLimitOffsetPagination
+from comment.paginations import CommentCursorPagination
 from PaperfulRestAPI.config.permissions import AllowAny
 
 
@@ -25,7 +25,7 @@ from PaperfulRestAPI.config.permissions import AllowAny
     )
 )
 class ChildCommentListAPIView(ListAPIView):
-    pagination_class = CommentLimitOffsetPagination
+    pagination_class = CommentCursorPagination
     serializer_class = ChildCommentSerializer
     permission_classes = [AllowAny]
 

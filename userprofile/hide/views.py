@@ -11,13 +11,12 @@ from PaperfulRestAPI.tools.getters import get_user_profile_object, \
     get_user_profile_in_target_user_profile_hide_user_profiles, get_post_object, get_post_in_user_profile_hide_posts, \
     get_comment_object, get_comment_in_user_profile_hide_comments
 
-from post.paginations import PostLimitOffsetPagination
-from post.serializers import PostListSerializer
+
 from userprofile.hide.serializers import HideUserProfileIdRequestSerializer, HideCheckResponseSerializer, \
     HidePostIdRequestSerializer, HideCommentIdRequestSerializer
 
 from userprofile.models import UserProfile
-from userprofile.paginations import UserProfileLimitOffsetPagination
+from userprofile.paginations import UserProfileCursorPagination
 from userprofile.serializers import UserProfileDetailSerializer
 from django.utils.translation import gettext_lazy as _
 
@@ -39,7 +38,7 @@ from django.utils.translation import gettext_lazy as _
     ),
 )
 class UserProfileHideUserProfileListAPIView(ListAPIView):
-    pagination_class = UserProfileLimitOffsetPagination
+    pagination_class = UserProfileCursorPagination
     serializer_class = UserProfileDetailSerializer
     permission_classes = [IsOwnerOnly]
 

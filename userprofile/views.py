@@ -11,7 +11,7 @@ from PaperfulRestAPI.config.domain import host_domain
 from PaperfulRestAPI.config.permissions import IsOwnerOrReadOnly
 
 from userprofile.models import UserProfile
-from userprofile.paginations import UserProfileLimitOffsetPagination
+from userprofile.paginations import UserProfileCursorPagination
 from userprofile.serializers import UserProfileDetailSerializer, BaseUserProfileSerializer, \
     NicknameValidateResponseSerializer, NicknameSerializer
 from django.urls import reverse
@@ -39,8 +39,8 @@ from django.core.exceptions import ValidationError
         }
     )
 )
-class UserProfileListAPIView(ListAPIView, UserProfileLimitOffsetPagination):
-    pagination_class = UserProfileLimitOffsetPagination
+class UserProfileListAPIView(ListAPIView):
+    pagination_class = UserProfileCursorPagination
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileDetailSerializer
     permission_classes = [IsAuthenticated]

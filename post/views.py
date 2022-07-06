@@ -11,13 +11,13 @@ from PaperfulRestAPI.config.domain import host_domain
 from PaperfulRestAPI.config.permissions import IsOwnerOrReadOnly, AllowAny, IsOwnerOnly, IsOwnerOrReadOnlyWithPostStatus
 
 from PaperfulRestAPI.tools.getters import get_post_object
-from comment.paginations import CommentLimitOffsetPagination
+from comment.paginations import CommentCursorPagination
 from comment.serializers import ParentCommentSerializer
 from post.models import Post
 from post.serializers import PostListSerializer, PostDetailSerializer, BasePostSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from post.paginations import PostLimitOffsetPagination
+from post.paginations import PostCursorPagination
 from django.db.models import Q
 from rest_framework.exceptions import NotFound
 
@@ -34,7 +34,7 @@ from rest_framework.exceptions import NotFound
     )
 )
 class PostListAPIView(ListAPIView):
-    pagination_class = PostLimitOffsetPagination
+    pagination_class = PostCursorPagination
     queryset = Post.objects.filter(status='O').order_by('-create_at')
     serializer_class = PostListSerializer
     permission_classes = [AllowAny]
@@ -138,7 +138,7 @@ class PostDetailAPIView(APIView):
     )
 )
 class PostCommentListAPIView(ListAPIView):
-    pagination_class = CommentLimitOffsetPagination
+    pagination_class = CommentCursorPagination
     serializer_class = ParentCommentSerializer
     permission_classes = [AllowAny]
 

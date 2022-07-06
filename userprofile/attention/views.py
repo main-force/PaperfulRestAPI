@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 
 from PaperfulRestAPI.config.permissions import IsOwnerOnly
 from PaperfulRestAPI.tools.getters import get_post_object, get_post_in_user_profile_attention_posts, get_comment_object, get_comment_in_user_profile_attention_comments
-from post.paginations import PostLimitOffsetPagination
+from post.paginations import PostCursorPagination
 from post.serializers import PostListSerializer
 from userprofile.attention.serializers import AttentionPostIdRequestSerializer, AttentionCheckResponseSerializer, \
     AttentionCommentIdRequestSerializer
@@ -33,7 +33,7 @@ from django.utils.translation import gettext_lazy as _
     ),
 )
 class UserProfileAttentionPostListAPIView(ListAPIView):
-    pagination_class = PostLimitOffsetPagination
+    pagination_class = PostCursorPagination
     serializer_class = PostListSerializer
     permission_classes = [IsOwnerOnly]
 

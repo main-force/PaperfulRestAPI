@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from PaperfulRestAPI.config.permissions import IsOwnerOnly
 from PaperfulRestAPI.tools.getters import get_user_profile_object, get_user_profile_in_user_profile_subscriptions
 from userprofile.models import UserProfile
-from userprofile.paginations import UserProfileLimitOffsetPagination
+from userprofile.paginations import UserProfileCursorPagination
 from userprofile.serializers import UserProfileDetailSerializer
 from userprofile.subscription.serializers import SubscribeUserProfileIdRequestSerializer, \
     SubscribeCheckResponseSerializer
@@ -31,7 +31,7 @@ from django.utils.translation import gettext as _
     ),
 )
 class UserProfileSubscriptionListAPIView(ListAPIView):
-    pagination_class = UserProfileLimitOffsetPagination
+    pagination_class = UserProfileCursorPagination
     serializer_class = UserProfileDetailSerializer
     permission_classes = [IsOwnerOnly]
 

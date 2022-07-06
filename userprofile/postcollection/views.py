@@ -4,14 +4,9 @@ from rest_framework.exceptions import NotFound
 from rest_framework.generics import ListAPIView
 
 from rest_framework.response import Response
-from rest_framework.views import APIView
-from PaperfulRestAPI.config.domain import host_domain
-from PaperfulRestAPI.config.permissions import IsOwnerOrReadOnly, IsOwnerOnly
-from comment.paginations import CommentLimitOffsetPagination
-from comment.serializers import BaseCommentSerializer, ParentCommentSerializer
-from post.models import Post
-from post.paginations import PostLimitOffsetPagination
-from post.serializers import PostListSerializer, BasePostSerializer, PostDetailSerializer
+
+from PaperfulRestAPI.config.permissions import IsOwnerOnly
+
 from postcollection.models import PostCollection
 from postcollection.paginations import PostCollectionLimitOffsetPagination
 from postcollection.serializers import BasePostCollectionSerializer, PostCollectionDetailSerializer

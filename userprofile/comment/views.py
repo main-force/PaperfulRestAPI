@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 
 from PaperfulRestAPI.config.permissions import IsOwnerOnly
 from PaperfulRestAPI.tools.getters import get_comment_object
-from comment.paginations import CommentLimitOffsetPagination
+from comment.paginations import CommentCursorPagination
 from comment.serializers import BaseCommentSerializer, ChildCommentSerializer
 from userprofile.models import UserProfile
 from django.utils.translation import gettext_lazy as _
@@ -23,7 +23,7 @@ from django.utils.translation import gettext_lazy as _
         }
     )
 )
-class UserProfileChildCommentListAPIView(APIView, CommentLimitOffsetPagination):
+class UserProfileChildCommentListAPIView(APIView, CommentCursorPagination):
     permission_classes = [IsOwnerOnly]
 
     def get_user_profile(self, pk):

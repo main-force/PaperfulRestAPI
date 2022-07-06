@@ -7,10 +7,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from PaperfulRestAPI.config.domain import host_domain
 from PaperfulRestAPI.config.permissions import IsOwnerOrReadOnly, IsOwnerOnly, IsOwnerOrReadOnlyWithPostStatus
-from comment.paginations import CommentLimitOffsetPagination
+from comment.paginations import CommentCursorPagination
 from comment.serializers import BaseCommentSerializer, ParentCommentSerializer
 from post.models import Post
-from post.paginations import PostLimitOffsetPagination
+from post.paginations import PostCursorPagination
 from post.serializers import PostListSerializer, BasePostSerializer, PostDetailSerializer
 from userprofile.models import UserProfile
 
@@ -38,7 +38,7 @@ from PaperfulRestAPI.tools.getters import get_post_object
     )
 )
 class UserProfilePostListAPIView(ListAPIView):
-    pagination_class = PostLimitOffsetPagination
+    pagination_class = PostCursorPagination
     serializer_class = PostListSerializer
     permission_classes = [IsOwnerOrReadOnlyWithPostStatus]
     lookup_url_kwarg = 'user_profile_pk'
@@ -98,7 +98,7 @@ class UserProfilePostListAPIView(ListAPIView):
         }
     )
 )
-class UserProfileCommentListAPIView(APIView, CommentLimitOffsetPagination):
+class UserProfileCommentListAPIView(APIView, CommentCursorPagination):
     permission_classes = [IsOwnerOnly]
 
     def get_user_profile(self, pk):

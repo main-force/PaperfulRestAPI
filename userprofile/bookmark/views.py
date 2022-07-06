@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from PaperfulRestAPI.config.permissions import IsOwnerOnly
 from PaperfulRestAPI.tools.getters import get_post_object, get_post_in_user_profile_bookmarks
 
-from post.paginations import PostLimitOffsetPagination
+from post.paginations import PostCursorPagination
 from post.serializers import PostListSerializer
 from userprofile.bookmark.serializers import BookmarkPostIdRequestSerializer, BookmarkCheckResponseSerializer
 from django.utils.translation import gettext_lazy as _
@@ -34,7 +34,7 @@ from userprofile.models import UserProfile
     ),
 )
 class UserProfileBookmarkPostListAPIView(ListAPIView):
-    pagination_class = PostLimitOffsetPagination
+    pagination_class = PostCursorPagination
     serializer_class = PostListSerializer
     permission_classes = [IsOwnerOnly]
 
