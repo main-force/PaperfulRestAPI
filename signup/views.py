@@ -44,7 +44,7 @@ class Signup(APIView):
             instance = serializer.save()
             token, created = Token.objects.get_or_create(user=instance)
             data = {
-                'login_token': token
+                'login_token': token.key
             }
             return Response(data=data, status=201)
         else:
