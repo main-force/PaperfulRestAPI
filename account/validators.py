@@ -5,9 +5,11 @@ from django.utils.translation import gettext_lazy as _
 
 class SymbolPasswordValidator(object):
     allow_symbols = '~!@#$%^&*_-+=<>.'
+    allow_symbol_patterns = ['~', '!', '@', '#', '$', '%', '^',
+                             '&', '*', '_', '-', '+', '=', '<', '>', '.']
 
     def validate(self, password, user=None):
-        if not re.findall(self.allow_symbols, password):
+        if not re.findall('[~!@#$%^&*_\-+=<>.]', password):
             raise ValidationError(
                 _('패스워드는 최소 특수문자 1개를 포함해야 합니다: ' +
                   self.allow_symbols),
