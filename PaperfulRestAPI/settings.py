@@ -70,7 +70,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.cache.UpdateCacheMiddleware',
-    'corsheaders.middleware.CorsMiddleware'
+    'corsheaders.middleware.CorsMiddleware',
+    'PaperfulRestAPI.config.log_format.UserUUIDMiddleware',
 ]
 
 ROOT_URLCONF = 'PaperfulRestAPI.urls'

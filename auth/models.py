@@ -6,6 +6,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 from PaperfulRestAPI.tools.random_generator import get_sixteen_random_token
 from django.utils.translation import gettext_lazy as _
 
+
 def after_3minutes():
     return timezone.now() + timedelta(minutes=3)
 

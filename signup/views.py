@@ -1,7 +1,9 @@
+import rest_framework.serializers
 from django.core.validators import EmailValidator
 from django.shortcuts import render
 from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import extend_schema_view, extend_schema, OpenApiParameter, OpenApiResponse
+from drf_spectacular.utils import extend_schema_view, extend_schema, OpenApiParameter, OpenApiResponse, \
+    inline_serializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -9,6 +11,7 @@ import account.validators
 from PaperfulRestAPI.config.permissions import AllowAny
 from django.core.exceptions import ValidationError
 from account.models import User
+from rest_framework.authtoken.models import Token
 
 from account.serializers import UserSignupSerializer
 from signup.serializers import EmailSerializer, EmailValidateResponseSerializer
@@ -23,7 +26,12 @@ from django.utils.translation import gettext_lazy as _
         auth=[],
         request=UserSignupSerializer,
         responses={
-            201: None
+            201: inline_serializer(
+                name='SignUpResponse',
+                fields={
+                    'login_token': rest_framework.serializers.CharField(),
+                }
+            )
         }
     )
 )
@@ -33,8 +41,12 @@ class Signup(APIView):
     def post(self, request):
         serializer = UserSignupSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(status=201)
+            instance = serializer.save()
+            token, created = Token.objects.get_or_create(user=instance)
+            data = {
+                'login_token': token
+            }
+            return Response(data=data, status=201)
         else:
             return Response(serializer.errors, status=400)
 
