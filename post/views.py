@@ -30,7 +30,6 @@ from rest_framework.exceptions import NotFound
         parameters=[
             OpenApiParameter(name='search_query', description='검색어(제목, 내용, 닉네임 통합 검색)', required=False, type=str),
         ],
-        auth=[]
     )
 )
 class PostListAPIView(ListAPIView):
