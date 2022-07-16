@@ -123,3 +123,10 @@ def get_report_comment_object(reporter_user_profile, comment):
         return report
     except ObjectDoesNotExist:
         return None
+
+
+def get_request_user_uuid(request):
+    if request.user.is_authenticated:
+        return request.user.uuid
+    else:
+        return ""

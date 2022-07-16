@@ -10,3 +10,4 @@ static
 /PaperfulRestAPI/config/domain.py
 /PaperfulRestAPI/config/si.py
 /PaperfulRestAPI/config/sms_service.py
+logs/*

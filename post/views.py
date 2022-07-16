@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from PaperfulRestAPI.config.domain import host_domain
 from PaperfulRestAPI.config.permissions import IsOwnerOrReadOnly, AllowAny, IsOwnerOnly, IsOwnerOrReadOnlyWithPostStatus
 
-from PaperfulRestAPI.tools.getters import get_post_object
+from PaperfulRestAPI.tools.getters import get_post_object, get_request_user_uuid
 from comment.paginations import CommentCursorPagination
 from comment.serializers import ParentCommentSerializer
 from post.models import Post
@@ -20,6 +20,7 @@ from rest_framework.response import Response
 from post.paginations import PostCursorPagination
 from django.db.models import Q
 from rest_framework.exceptions import NotFound
+import logging
 
 
 @extend_schema_view(
@@ -39,6 +40,7 @@ class PostListAPIView(ListAPIView):
     permission_classes = [AllowAny]
 
     def get(self, request, *args, **kwargs):
+        print(request.META)
         search_query = request.GET.get('search_query', None)
         if search_query:
             post_list = self.get_queryset().filter((Q(title__contains=search_query) | Q(content__contains=search_query) | Q(writer__nickname__contains=search_query))).order_by('-create_at')
@@ -93,6 +95,10 @@ class PostDetailAPIView(APIView):
             hit_count = post.hit_count
             HitCountMixin.hit_count(request, hit_count)
             serializer = PostDetailSerializer(post)
+            logger = logging.getLogger('posts.detail')
+            user_uuid = get_request_user_uuid(request)
+            logger.info(f'{pk}/"{user_uuid}"')
+
             return Response(serializer.data)
         else:
             data = {

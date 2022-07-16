@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-g)=6tig$y2^ajt1p*abn$uvpd)$rfgp#e#y+5u!s3dgp8_0_hx'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -71,7 +71,6 @@ MIDDLEWARE = [
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.cache.UpdateCacheMiddleware',
     'corsheaders.middleware.CorsMiddleware',
-    'PaperfulRestAPI.config.log_format.UserUUIDMiddleware',
 ]
 
 ROOT_URLCONF = 'PaperfulRestAPI.urls'
@@ -228,3 +227,73 @@ SPECTACULAR_SETTINGS = {
 FILE_UPLOAD_HANDLERS = [
     'django.core.files.uploadhandler.TemporaryFileUploadHandler',
 ]
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'formatters': {
+        'django.server': {
+            '()': 'django.utils.log.ServerFormatter',
+            'format': '[{server_time}] {message}',
+            'style': '{',
+        },
+        'standard': {
+            'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+        },
+        'simple': {
+            'format': '%(asctime)s/%(name)s/%(message)s',
+            'datefmt': '%Y-%m-%dT%H:%M:%S'
+        }
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+        },
+        'django.server': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'django.server',
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler'
+        },
+        'post_detail_file': {
+            'level': 'INFO',
+            'encoding': 'utf-8',
+            'filters': ['require_debug_false'],
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': BASE_DIR / 'logs/post_detail_access.log',
+            'maxBytes': 1024*1024*5,  # 5 MB
+            'backupCount': 30,
+            'formatter': 'simple',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'INFO',
+        },
+        'django.server': {
+            'handlers': ['django.server'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'posts.detail': {
+            'handlers': ['post_detail_file'],
+            'level': 'INFO',
+        },
+    }
+}
+
