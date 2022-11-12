@@ -16,7 +16,7 @@ import uuid
 
 
 class Tag(models.Model):
-    name = models.CharField(max_length=10)
+    name = models.CharField(unique=True, max_length=10)
 
     def __str__(self):
         return self.name
@@ -122,11 +122,6 @@ class Attention(models.Model):
 class PostTag(models.Model):
     post = models.ForeignKey('post.Post', on_delete=models.CASCADE, help_text=_('태그한 글'))
     tag = models.ForeignKey('Tag', on_delete=models.CASCADE, help_text=_('글의 태그'))
-    create_at = models.DateTimeField(auto_now_add=True, help_text=_('글이 태그 된 날짜'))
-    update_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        ordering = ('-update_at',)
 
     def __str__(self):
         return f'[{self.tag.name}]{self.post.title}'

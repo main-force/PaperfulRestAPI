@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-g)=6tig$y2^ajt1p*abn$uvpd)$rfgp#e#y+5u!s3dgp8_0_hx'
+SECRET_KEY = PaperfulRestAPI.config.si.DJANGO_SECRET,
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -102,9 +102,9 @@ DATABASES = {
         # 'NAME': BASE_DIR / 'db.sqlite3',
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'paperful',
-        'USER': 'mainforce',
+        'USER': 'paperful_dev',
         'PASSWORD': PaperfulRestAPI.config.si.DB_USER_PASSWORD,
-        'HOST': '127.0.0.1',
+        'HOST': 'paperful-postgres.ctangqgzirzt.ap-northeast-2.rds.amazonaws.com',
         'PORT': '5432'
     }
 }

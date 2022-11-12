@@ -11,3 +11,4 @@ static
 /PaperfulRestAPI/config/si.py
 /PaperfulRestAPI/config/sms_service.py
 logs/*
+.DS_Store
